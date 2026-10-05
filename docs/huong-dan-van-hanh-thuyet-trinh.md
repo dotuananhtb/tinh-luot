@@ -15,6 +15,8 @@ Tài liệu cho cả nhóm: ai làm gì, bấm gì, lúc nào, và xử lý khi 
 
 Mã QR **tự hiện trên trang Trình chiếu**, không cần tạo QR riêng.
 
+> ⚠️ **Mở `/trinh-chieu` và `/quan-tri` bằng Safari hoặc Chrome**, không bấm link ngay trong Zalo/Messenger/Facebook: Google chặn đăng nhập trong trình duyệt của các app này. Trang sẽ tự cảnh báo và có nút sao chép link. Khán giả mở `/bo-phieu` trong Zalo vẫn được.
+
 ## 2. Phân vai trong buổi diễn
 
 | Vai | Số người | Thiết bị | Việc chính |
@@ -32,6 +34,7 @@ MC, người thao tác và người kiểm duyệt **đều phải là biên t�
 - [ ] Nhóm nội dung (người 1–10) đối chiếu chữ trên web với giáo trình, sửa thẳng ở `/quan-tri` rồi bấm **Lưu**.
 - [ ] Tập trọn kịch bản (mục 4) **2 lần** với điện thoại thật, đúng như ngày diễn.
 - [ ] Rủ trước 10–15 bạn ngoài nhóm vào ký cam kết thử, để bộ đếm không bắt đầu từ 0.
+- [ ] Nắm sĩ số lớp: gói Firebase miễn phí cho tối đa **100 kết nối cùng lúc**. Web tự ngắt các tab bị ẩn sau 30 giây nên lớp 40–80 người là an toàn. Lớp ghép đông hơn thì owner nâng Firebase lên gói Blaze (trả theo dùng, một buổi gần như 0 đồng).
 
 ### Ngày hôm trước
 - [ ] Sau lần sửa nội dung **cuối cùng**, owner vào GitHub repo → tab **Actions** → **Deploy to GitHub Pages** → **Run workflow**. Nội dung mới sẽ được nhúng sẵn vào trang, nên cả lớp quét QR thấy đúng chữ ngay, không bị đổi chữ sau khi tải.
@@ -88,6 +91,7 @@ Các nút dưới chân màn hình làm được đúng những việc trên, MC
 
 | Sự cố | Cách xử lý ngay |
 |---|---|
+| Nhiều bạn báo không vào được cùng lúc (lớp rất đông) | Nhắc mọi người chỉ mở **một** trang (`/bo-phieu`) và đóng các tab khác; tab ẩn sẽ tự nhả kết nối sau 30 giây |
 | Điện thoại khán giả báo "Chưa kết nối được" | Bảo các bạn tắt wifi trường, dùng 4G; hoặc phát hotspot. Trang chính vẫn chơi được khi mất mạng |
 | Biểu đồ không nhảy dù lớp đã bấm | Kiểm tra Tab B còn đăng nhập không (góc trên có nút "Đăng xuất"). Tải lại Tab B (Cmd/Ctrl + R), trạng thái vẫn giữ nguyên |
 | Có bạn bấm nhầm, muốn đổi phiếu | Không đổi được (mỗi máy 1 phiếu mỗi bài). Đây là chủ ý để kết quả công bằng |

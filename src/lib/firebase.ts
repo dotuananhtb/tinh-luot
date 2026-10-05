@@ -2,7 +2,7 @@
 
 import { getApp, getApps, initializeApp } from "firebase/app";
 import type { Auth, User } from "firebase/auth";
-import { getDatabase, onValue, ref } from "firebase/database";
+import { getDatabase, goOffline, goOnline, onValue, ref, type Database } from "firebase/database";
 import { useEffect, useState } from "react";
 import { firebaseConfig } from "./firebase-config";
 
@@ -10,7 +10,29 @@ import { firebaseConfig } from "./firebase-config";
 function app() {
   return getApps().length ? getApp() : initializeApp(firebaseConfig);
 }
-export const db = () => getDatabase(app());
+/**
+ * Gói Firebase miễn phí giới hạn 100 kết nối đồng thời. Tab bị ẩn quá 30 giây sẽ tự ngắt,
+ * quay lại tab thì tự nối lại (các listener onValue tự nhận dữ liệu mới), nên một người
+ * mở nhiều tab vẫn chỉ chiếm kết nối ở tab đang xem.
+ */
+const IDLE_DISCONNECT_MS = 30_000;
+let offlineWatch = false;
+function watchVisibility(database: Database) {
+  if (offlineWatch || typeof document === "undefined") return;
+  offlineWatch = true;
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  document.addEventListener("visibilitychange", () => {
+    clearTimeout(timer);
+    if (document.visibilityState === "hidden") timer = setTimeout(() => goOffline(database), IDLE_DISCONNECT_MS);
+    else goOnline(database);
+  });
+}
+
+export const db = () => {
+  const database = getDatabase(app());
+  watchVisibility(database);
+  return database;
+};
 export const dbRef = (path: string) => ref(db(), path);
 
 /**

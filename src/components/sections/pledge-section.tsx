@@ -180,6 +180,7 @@ export function PledgeSection({
                   <BellOff /> Tôi cam kết
                 </Button>
               </div>
+              <p className="mt-2 text-xs text-muted-ink">Tên sẽ hiện công khai trên bức tường và màn chiếu. Có thể ký bằng biệt danh.</p>
             </form>
 
             <div className="mt-8 flex flex-wrap items-baseline gap-3 font-mono font-bold">

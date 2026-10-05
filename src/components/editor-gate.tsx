@@ -1,9 +1,9 @@
 "use client";
 
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useState, useSyncExternalStore } from "react";
 import { GoogleAuthProvider, signInWithPopup, signOut, type User } from "firebase/auth";
 import { set } from "firebase/database";
-import { KeyRound, LogIn, LogOut, ShieldAlert } from "lucide-react";
+import { Copy, KeyRound, LogIn, LogOut, ShieldAlert, TriangleAlert } from "lucide-react";
 import { dbRef, emailKey, getAuthInstance, useDbValue, useUser } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -27,6 +27,41 @@ function Shell({ title, children }: { title: string; children: React.ReactNode }
         {children}
       </div>
     </main>
+  );
+}
+
+/**
+ * Google chặn đăng nhập trong trình duyệt nhúng của các app (lỗi "disallowed_useragent"),
+ * nên mở link từ Zalo/Messenger/Facebook… sẽ không đăng nhập được. Phát hiện để hướng dẫn trước.
+ */
+const IN_APP_UA = /FBAN|FBAV|FB_IAB|Instagram|Zalo|Messenger|MicroMessenger|Line\/|TikTok|musical_ly|; wv\)/i;
+const noopSubscribe = () => () => {};
+function useInAppBrowser() {
+  return useSyncExternalStore(noopSubscribe, () => IN_APP_UA.test(navigator.userAgent), () => false);
+}
+
+function InAppWarning() {
+  const [copied, setCopied] = useState(false);
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      setCopied(true);
+    } catch {
+      // clipboard bị chặn: người dùng dùng menu "Mở bằng trình duyệt" của app
+    }
+  };
+  return (
+    <div className="mb-5 rounded-xl border-2 border-alarm bg-alarm/10 p-4 text-sm" role="alert">
+      <p className="flex items-center gap-1.5 font-bold text-alarm">
+        <TriangleAlert className="size-4" /> Đang mở trong ứng dụng (Zalo/Messenger…)
+      </p>
+      <p className="mt-1.5">
+        Google không cho đăng nhập ở đây. Bấm <b>⋯</b> ở góc màn hình → <b>Mở bằng trình duyệt</b> (Safari/Chrome), hoặc sao chép link rồi dán vào Safari/Chrome.
+      </p>
+      <Button size="sm" variant="outline" className="mt-3" onClick={copy}>
+        <Copy /> {copied ? "Đã sao chép link" : "Sao chép link"}
+      </Button>
+    </div>
   );
 }
 
@@ -86,6 +121,7 @@ export function EditorGate({ title, children }: { title: string; children: React
   const user = useUser();
   const isGoogle = !!user && !user.isAnonymous && !!user.email;
   const role = useDbValue<Role>(isGoogle ? `editors/${emailKey(user.email!)}` : null);
+  const inApp = useInAppBrowser();
   const [error, setError] = useState<string | null>(null);
 
   const login = async () => {
@@ -95,7 +131,9 @@ export function EditorGate({ title, children }: { title: string; children: React
     } catch (e) {
       const code = (e as { code?: string }).code ?? "";
       setError(
-        code.includes("operation-not-allowed") || code.includes("configuration-not-found")
+        code.includes("disallowed") || code.includes("web-storage-unsupported")
+          ? "Trình duyệt này không hỗ trợ đăng nhập Google. Mở link bằng Safari hoặc Chrome."
+          : code.includes("operation-not-allowed") || code.includes("configuration-not-found")
           ? "Đăng nhập Google chưa được bật trong Firebase (Authentication → Sign-in method)."
           : code.includes("unauthorized-domain")
             ? "Tên miền này chưa được thêm vào Authorized domains của Firebase."
@@ -114,6 +152,7 @@ export function EditorGate({ title, children }: { title: string; children: React
     return (
       <Shell title={title}>
         <p className="mb-5 text-muted-ink">Trang dành cho thành viên nhóm. Đăng nhập bằng tài khoản Google đã được cấp quyền.</p>
+        {inApp && <InAppWarning />}
         <Button onClick={login}>
           <LogIn /> Đăng nhập với Google
         </Button>

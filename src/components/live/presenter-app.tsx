@@ -27,7 +27,7 @@ const SCREENS: { key: LiveState["screen"]; label: string; hint: string }[] = [
 function JoinCard({ url, label, big = false }: { url: string; label: string; big?: boolean }) {
   return (
     <div className={cn("flex items-center gap-4 rounded-2xl border-2 border-ink bg-white p-3", big && "flex-col p-6")}>
-      <QrCode url={url} className={cn("aspect-square", big ? "w-[min(52vh,26rem)]" : "w-28")} />
+      <QrCode url={url} className={cn("aspect-square", big ? "w-[min(38vh,26rem)]" : "w-28")} />
       <div className={cn(big && "text-center")}>
         <p className={cn("font-mono font-extrabold", big ? "text-3xl" : "text-sm")}>{label}</p>
         <p className={cn("font-mono break-all text-muted-ink", big ? "mt-1 text-lg" : "text-xs")}>{url.replace(/^https?:\/\//, "")}</p>
@@ -53,7 +53,7 @@ function VoteScreen({ state }: { state: LiveState }) {
         <p className="font-mono text-lg font-extrabold">
           BÀI {state.post + 1}/{posts.length}
         </p>
-        <div className="overflow-hidden rounded-2xl border-2 border-ink text-xl [&_p]:text-[1.15rem]">
+        <div className="shrink-0 overflow-hidden rounded-2xl border-2 border-ink text-xl [&_.aspect-video]:aspect-auto [&_.aspect-video]:h-[clamp(5rem,17vh,15rem)] [&_p]:text-[1.15rem]">
           <PostBody post={post} truth={state.reveal} />
         </div>
         <JoinCard url={voteUrl} label="Quét để bỏ phiếu" />
@@ -147,8 +147,8 @@ function IdleScreen() {
   const voteUrl = useSiteUrl("/bo-phieu/");
   const { slogan } = useContent();
   return (
-    <div className="flex h-full flex-col items-center justify-center gap-8 text-center">
-      <p className="font-mono text-[clamp(2rem,4.5vw,3.5rem)] leading-tight font-extrabold text-balance">Mở điện thoại, quét mã để cùng lướt</p>
+    <div className="flex h-full flex-col items-center justify-center gap-5 text-center lg:gap-8">
+      <p className="font-mono text-[clamp(1.75rem,min(4.5vw,6vh),3.5rem)] leading-tight font-extrabold text-balance">Mở điện thoại, quét mã để cùng lướt</p>
       <JoinCard url={voteUrl} label="tinh-luot · bỏ phiếu" big />
       <p className="font-mono text-xl font-bold text-muted-ink">{slogan}</p>
     </div>
