@@ -21,6 +21,64 @@ export const NOISE_HEADLINES = [
   "AI CŨNG PHẢI BIẾT", "SỰ THẬT BỊ GIẤU", "SHARE MẠNH", "100% CÓ THẬT",
 ];
 
+/** Cảnh "câu nói bị cắt": mạng xã hội chỉ lan truyền một câu; lớp bản chất hiện cả đoạn. */
+export const MARX_QUOTE = {
+  cut: "Tôn giáo là thuốc phiện của nhân dân",
+  full: [
+    "Sự nghèo nàn của tôn giáo vừa là biểu hiện của sự nghèo nàn hiện thực, vừa là sự phản kháng chống sự nghèo nàn hiện thực ấy.",
+    "Tôn giáo là tiếng thở dài của chúng sinh bị áp bức, là trái tim của thế giới không có trái tim, cũng giống như nó là tinh thần của những trật tự không có tinh thần.",
+  ],
+  author: "C. Mác",
+};
+
+/** 4 nguyên tắc giải quyết vấn đề tôn giáo; mỗi nguyên tắc trả lời một ngộ nhận hay gặp trên mạng. */
+export const PRINCIPLES = [
+  {
+    myth: "Theo đạo hay không là chuyện cả xóm phải quyết!",
+    title: "Tôn trọng, bảo đảm quyền tự do tín ngưỡng và không tín ngưỡng",
+    body: "Theo hay không theo, theo tôn giáo nào là quyền của mỗi người. Không ai được ép buộc hay ngăn cấm.",
+  },
+  {
+    myth: "Cấm hết lễ bái là mê tín tự biến mất!",
+    title: "Khắc phục dần ảnh hưởng tiêu cực gắn với cải tạo xã hội cũ, xây dựng xã hội mới",
+    body: "Tôn giáo còn nguồn gốc tồn tại thì còn nhu cầu. Không thể xóa bằng mệnh lệnh, phải thay đổi chính hiện thực đời sống.",
+  },
+  {
+    myth: "Cứ dính đến tôn giáo là phản động!",
+    title: "Phân biệt hai mặt chính trị và tư tưởng",
+    body: "Niềm tin của quần chúng là mặt tư tưởng. Lợi dụng tôn giáo để chống phá là mặt chính trị. Hai việc khác nhau, cách giải quyết khác nhau.",
+  },
+  {
+    myth: "Tôn giáo nào, thời nào cũng như nhau cả!",
+    title: "Quan điểm lịch sử cụ thể",
+    body: "Vai trò, tác động của mỗi tôn giáo thay đổi theo từng thời kỳ, từng nơi. Phải xem xét trong điều kiện cụ thể.",
+  },
+];
+
+export type Face = "tutuong" | "chinhtri";
+
+export const FACES: Record<Face, { label: string; nature: string; method: string }> = {
+  tutuong: {
+    label: "Mặt tư tưởng",
+    nature: "Không đối kháng",
+    method: "Tôn trọng, tuyên truyền, giáo dục, giải quyết lâu dài",
+  },
+  chinhtri: {
+    label: "Mặt chính trị",
+    nature: "Đối kháng",
+    method: "Đấu tranh kiên quyết bằng pháp luật, nâng cao cảnh giác",
+  },
+};
+
+export const FACE_CASES: { text: string; face: Face }[] = [
+  { text: "Bà ngoại đi lễ chùa rằm tháng Giêng để cầu bình an cho con cháu.", face: "tutuong" },
+  { text: "Tài khoản ẩn danh cắt ghép clip để kích động hận thù giữa các tôn giáo.", face: "chinhtri" },
+  { text: "Bạn cùng phòng cầu nguyện trước mỗi bữa ăn.", face: "tutuong" },
+  { text: "Nhóm Z kêu gọi tín đồ không chấp hành pháp luật, chống lại chính quyền.", face: "chinhtri" },
+  { text: "Một người tin vào số mệnh, đầu năm hay đi xem bói.", face: "tutuong" },
+  { text: "Thế lực bên ngoài mượn danh “tự do tôn giáo” để can thiệp vào công việc nội bộ.", face: "chinhtri" },
+];
+
 export type FlipGroup = { group: string; cards: { q: string; a: string }[] };
 
 export const FLIPS: FlipGroup[] = [

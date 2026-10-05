@@ -50,10 +50,10 @@ export function HeroSection() {
       {/* Lớp điều khiển nằm trên cả hai lớp, luôn bấm được. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-3 px-4 pb-6">
         <p className="pointer-events-auto rounded-full border-2 border-ink bg-white px-4 py-2 text-center font-mono text-xs font-bold">
-          {coarse ? "Kéo Kính Tỉnh hoặc cuộn trang để soi lớp sự thật" : "Di chuột để soi lớp sự thật bên dưới tiếng ồn"}
+          {coarse ? "Kéo Kính Tỉnh hoặc cuộn trang để soi bản chất dưới hiện tượng" : "Di chuột để soi bản chất bên dưới hiện tượng"}
         </p>
         <div className="pointer-events-auto flex flex-wrap justify-center gap-3">
-          <a href="#hieu-dung" className={buttonVariants({ size: "lg" })}>
+          <a href="#cau-noi" className={buttonVariants({ size: "lg" })}>
             Bắt đầu lướt <ArrowDown />
           </a>
           <button type="button" onClick={() => setFull(true)} className={buttonVariants({ variant: "outline", size: "lg" })}>

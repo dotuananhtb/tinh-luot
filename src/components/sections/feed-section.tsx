@@ -85,7 +85,7 @@ function PostBody({ post, truth }: { post: Post; truth?: boolean }) {
         </div>
         {truth && (
           <span className="rounded-full bg-ink px-2 py-1 font-mono text-[9px] font-bold tracking-wider text-lime">
-            LỚP SỰ THẬT
+            BẢN CHẤT
           </span>
         )}
       </div>

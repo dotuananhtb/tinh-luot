@@ -68,7 +68,8 @@ export function LensProvider({ children }: { children: React.ReactNode }) {
       }
       setVisible(inView.current.size > 0);
       schedule();
-    });
+      // Bỏ dải trên/dưới màn hình: một lớp chỉ thò mép (hoặc khuất sau thanh tiến độ) thì không bật kính.
+    }, { rootMargin: "-15% 0px -15% 0px" });
     layers.current.forEach((el) => observer.current!.observe(el));
     return () => observer.current?.disconnect();
   }, [schedule]);

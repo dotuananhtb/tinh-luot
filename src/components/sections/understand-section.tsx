@@ -6,6 +6,7 @@ import { Check, Hand } from "lucide-react";
 import { FLIPS } from "@/lib/content";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/shared/section-heading";
+import { PrinciplesBlock } from "@/components/sections/principles-block";
 
 const HOLD_SECONDS = 0.9;
 
@@ -120,8 +121,9 @@ export function UnderstandSection() {
           ))}
         </div>
         <p className="mt-8 font-mono text-sm font-bold" aria-live="polite">
-          Đã tỉnh {count}/{total} thẻ{count === total && " – cuộn xuống để lướt thử"}
+          Đã tỉnh {count}/{total} thẻ
         </p>
+        <PrinciplesBlock />
       </div>
     </section>
   );

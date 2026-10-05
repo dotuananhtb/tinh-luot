@@ -6,6 +6,7 @@ import { LensProvider } from "@/components/lens/lens-provider";
 import { Lens } from "@/components/lens/lens";
 import { ProgressBar } from "@/components/shared/progress-bar";
 import { HeroSection } from "@/components/sections/hero-section";
+import { QuoteScene } from "@/components/sections/quote-scene";
 import { UnderstandSection } from "@/components/sections/understand-section";
 import { FeedSection } from "@/components/sections/feed-section";
 import { SortSection } from "@/components/sections/sort-section";
@@ -40,6 +41,7 @@ export function Experience() {
       <ProgressBar noise={noise} />
       <main>
         <HeroSection />
+        <QuoteScene />
         <UnderstandSection />
         <FeedSection answers={answers} score={score} onPick={pick} onReset={reset} />
         <SortSection />
