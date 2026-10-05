@@ -1,0 +1,807 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Tỉnh Lướt</title>
+<meta name="description" content="Tỉnh táo khi lướt – Tôn trọng khi khác biệt. Sản phẩm sáng tạo về vấn đề tôn giáo trong thời kỳ quá độ lên CNXH.">
+<meta name="theme-color" content="#EDEDED">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=JetBrains+Mono:wght@500;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #EDEDED;
+    --ink: #1E1A1B;
+    --accent: #E5FD54;
+    --card: #FFFFFF;
+    --muted: #6B6567;
+    --line: #D3D1D1;
+    --ok: #1F8A4C;
+    --ok-bg: #E3F5EA;
+    --bad: #C2352B;
+    --bad-bg: #FBE6E4;
+    --mono: "JetBrains Mono", ui-monospace, Menlo, monospace;
+    --sans: "Be Vietnam Pro", system-ui, -apple-system, "Segoe UI", sans-serif;
+    --radius: 14px;
+  }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+  body {
+    margin: 0; background: var(--bg); color: var(--ink);
+    font: 16px/1.55 var(--sans); -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  h1, h2, h3, .mono { font-family: var(--mono); letter-spacing: -0.02em; }
+  h2 { font-size: clamp(1.5rem, 5vw, 2.2rem); line-height: 1.15; margin: 0 0 8px; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+  section { padding: 64px 0; border-top: 2px solid var(--ink); }
+  .kicker {
+    display: inline-block; font: 700 12px/1 var(--mono); text-transform: uppercase;
+    background: var(--ink); color: var(--accent); padding: 6px 8px; border-radius: 4px; margin-bottom: 14px;
+  }
+  .lead { color: var(--muted); margin: 0 0 28px; }
+  .hl { background: var(--accent); padding: 0 4px; box-decoration-break: clone; -webkit-box-decoration-break: clone; }
+  .btn {
+    display: inline-flex; align-items: center; gap: 8px; border: 2px solid var(--ink);
+    background: var(--accent); padding: 12px 20px; border-radius: 999px;
+    font: 700 15px/1 var(--mono); box-shadow: 4px 4px 0 var(--ink); transition: transform .12s, box-shadow .12s;
+    text-decoration: none; color: var(--ink);
+  }
+  .btn:hover { transform: translate(-1px,-1px); box-shadow: 5px 5px 0 var(--ink); }
+  .btn:active { transform: translate(3px,3px); box-shadow: 1px 1px 0 var(--ink); }
+  .btn.ghost { background: var(--card); }
+  .btn[disabled] { opacity: .45; pointer-events: none; }
+
+  /* ---------- Thanh tiến độ ---------- */
+  .progress {
+    position: sticky; top: 0; z-index: 50; background: rgba(237,237,237,.92);
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border-bottom: 2px solid var(--ink);
+  }
+  .progress ol { display: flex; gap: 4px; list-style: none; margin: 0 auto; padding: 10px 16px; max-width: 760px; }
+  .progress li { flex: 1; }
+  .progress a {
+    display: block; text-decoration: none; color: var(--muted); font: 700 10px/1.2 var(--mono);
+    text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .progress a::before {
+    content: ""; display: block; height: 6px; border-radius: 3px; background: var(--line);
+    border: 1.5px solid transparent; margin-bottom: 5px; transition: background .25s;
+  }
+  .progress a.done::before { background: var(--ink); }
+  .progress a.active { color: var(--ink); }
+  .progress a.active::before { background: var(--accent); border-color: var(--ink); }
+  @media (max-width: 520px) { .progress a span { display: none; } }
+
+  /* ---------- Phần 1: Mở đầu ---------- */
+  #mo-dau { position: relative; min-height: calc(100svh - 46px); display: grid; place-items: center; overflow: hidden; border-top: 0; padding: 48px 0; }
+  .ghost-feed {
+    position: absolute; inset: -20% 0 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+    padding: 0 16px; filter: blur(5px); opacity: .5; pointer-events: none;
+  }
+  .ghost-col { display: flex; flex-direction: column; gap: 16px; animation: drift 38s linear infinite; }
+  .ghost-col:nth-child(2) { animation-duration: 30s; animation-direction: reverse; }
+  .ghost-col:nth-child(3) { animation-duration: 44s; }
+  .ghost-post { background: var(--card); border-radius: 12px; padding: 14px; }
+  .ghost-post i { display: block; height: 9px; background: var(--line); border-radius: 5px; margin: 7px 0; }
+  .ghost-post i:first-child { width: 40%; background: var(--ink); opacity: .35; }
+  .ghost-post b { display: block; height: 70px; border-radius: 8px; background: var(--accent); opacity: .7; margin-top: 10px; }
+  @keyframes drift { from { transform: translateY(0); } to { transform: translateY(-50%); } }
+  @media (prefers-reduced-motion: reduce) { .ghost-col { animation: none; } html { scroll-behavior: auto; } }
+  .hero { position: relative; text-align: center; }
+  .hero .brand { font: 800 14px/1 var(--mono); letter-spacing: .2em; margin-bottom: 28px; }
+  .hero .brand span { background: var(--accent); padding: 4px 8px; border: 2px solid var(--ink); }
+  .hero h1 { font-size: clamp(1.9rem, 7vw, 3.4rem); line-height: 1.12; margin: 0 0 20px; }
+  .hero p { max-width: 520px; margin: 0 auto 32px; font-size: 1.05rem; }
+  .hero .slogan { margin-top: 36px; font: 700 13px/1.4 var(--mono); color: var(--muted); }
+
+  /* ---------- Phần 2: Thẻ lật ---------- */
+  .group-title { font: 700 13px/1 var(--mono); text-transform: uppercase; margin: 28px 0 12px; display: flex; align-items: center; gap: 10px; }
+  .group-title::after { content: ""; flex: 1; height: 2px; background: var(--ink); opacity: .15; }
+  .flip-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+  @media (max-width: 640px) { .flip-grid { grid-template-columns: 1fr; } }
+  .flip { perspective: 1000px; min-height: 170px; border: 0; padding: 0; background: none; text-align: left; }
+  .flip-inner { position: relative; width: 100%; height: 100%; min-height: 170px; transition: transform .55s cubic-bezier(.2,.8,.2,1); transform-style: preserve-3d; }
+  .flip.flipped .flip-inner { transform: rotateY(180deg); }
+  .face {
+    position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden;
+    border: 2px solid var(--ink); border-radius: var(--radius); padding: 16px; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .face.front { background: var(--card); }
+  .face.front strong { font-size: 1.08rem; line-height: 1.35; }
+  .face.front small { font: 700 11px/1 var(--mono); color: var(--muted); }
+  .face.back { background: var(--ink); color: var(--bg); transform: rotateY(180deg); }
+  .face.back small { font: 700 11px/1 var(--mono); color: var(--accent); }
+  .face.back p { margin: 0; font-size: .97rem; }
+  .flip-count { font: 700 13px/1 var(--mono); margin-top: 20px; color: var(--muted); }
+
+  /* ---------- Phần 3: Bảng tin ---------- */
+  .scorebar {
+    position: sticky; top: 52px; z-index: 20; display: flex; justify-content: space-between; align-items: center;
+    background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; margin-bottom: 18px; font: 700 14px/1 var(--mono);
+  }
+  .scorebar b { color: var(--accent); font-size: 18px; }
+  .feed { display: flex; flex-direction: column; gap: 16px; max-width: 560px; margin: 0 auto; }
+  .post { background: var(--card); border-radius: var(--radius); border: 1px solid var(--line); overflow: hidden; }
+  .post-head { display: flex; gap: 10px; align-items: center; padding: 14px 14px 0; }
+  .avatar { width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; font: 700 15px/1 var(--mono); flex: none; }
+  .post-head .who { line-height: 1.25; }
+  .post-head .who strong { font-size: .95rem; }
+  .post-head .who small { color: var(--muted); font-size: .8rem; display: block; }
+  .post-body { padding: 10px 14px 12px; }
+  .post-body p { margin: 0; }
+  .media {
+    margin: 0 14px 12px; border-radius: 10px; aspect-ratio: 16/9; display: grid; place-items: center; position: relative;
+    background: repeating-linear-gradient(45deg, #2a2526 0 14px, #322c2d 14px 28px); color: #fff; overflow: hidden;
+  }
+  .media.light { background: repeating-linear-gradient(45deg, #f4f7d9 0 14px, #eef3c4 14px 28px); color: var(--ink); }
+  .media .play { width: 56px; height: 56px; border-radius: 50%; background: rgba(255,255,255,.9); display: grid; place-items: center; }
+  .media .play svg { width: 22px; height: 22px; fill: var(--ink); margin-left: 3px; }
+  .media .tag { position: absolute; top: 10px; left: 10px; font: 700 11px/1 var(--mono); padding: 5px 7px; border-radius: 4px; background: var(--bad); color: #fff; }
+  .media .tag.cap { background: rgba(0,0,0,.6); }
+  .media .caption { position: absolute; bottom: 10px; left: 10px; right: 10px; font: 700 13px/1.3 var(--sans); text-shadow: 0 1px 3px rgba(0,0,0,.6); }
+  .dm { margin: 0 14px 12px; background: #F3F2F2; border-radius: 12px; padding: 12px; }
+  .dm .bubble { background: var(--card); border: 1px solid var(--line); border-radius: 14px 14px 14px 4px; padding: 10px 12px; max-width: 90%; }
+  .dm small { display: block; color: var(--muted); font-size: .75rem; margin-top: 6px; }
+  .stats { display: flex; justify-content: space-between; color: var(--muted); font-size: .8rem; padding: 0 14px 10px; border-bottom: 1px solid var(--line); }
+  .actions { display: grid; grid-template-columns: repeat(5, 1fr); gap: 4px; padding: 8px; }
+  .act {
+    border: 0; background: none; border-radius: 10px; padding: 8px 2px; display: flex; flex-direction: column; align-items: center; gap: 4px;
+    font: 600 11.5px/1.15 var(--sans); color: var(--muted); text-align: center; transition: background .15s, color .15s;
+  }
+  .act svg { width: 20px; height: 20px; stroke: currentColor; fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .act:hover:not([disabled]) { background: #F3F2F2; color: var(--ink); }
+  .act[disabled] { cursor: default; }
+  .act.picked { color: var(--ink); background: var(--accent); }
+  .act.correct-answer { outline: 2px dashed var(--ok); outline-offset: -2px; color: var(--ok); }
+  .feedback { margin: 0 8px 10px; padding: 12px 14px; border-radius: 10px; font-size: .92rem; display: none; }
+  .feedback.show { display: block; animation: pop .25s ease-out; }
+  .feedback.ok { background: var(--ok-bg); border-left: 4px solid var(--ok); }
+  .feedback.bad { background: var(--bad-bg); border-left: 4px solid var(--bad); }
+  .feedback b { font-family: var(--mono); display: block; margin-bottom: 4px; }
+  @keyframes pop { from { opacity: 0; transform: translateY(-4px); } }
+
+  .result {
+    display: none; margin: 24px auto 0; max-width: 560px; text-align: center; background: var(--card);
+    border: 2px solid var(--ink); border-radius: var(--radius); padding: 28px 20px; box-shadow: 6px 6px 0 var(--ink);
+  }
+  .result.show { display: block; animation: pop .3s ease-out; }
+  .result .big { font: 800 56px/1 var(--mono); }
+  .result .badge { display: inline-block; font: 800 18px/1.2 var(--mono); padding: 8px 14px; border: 2px solid var(--ink); border-radius: 8px; margin: 14px 0 8px; }
+  .result p { color: var(--muted); margin: 0 0 18px; }
+
+  /* ---------- Phần 4: Phân loại ---------- */
+  .pool { display: flex; flex-wrap: wrap; gap: 8px; min-height: 52px; padding: 12px; border: 2px dashed var(--line); border-radius: var(--radius); margin-bottom: 16px; }
+  .chip {
+    background: var(--card); border: 2px solid var(--ink); border-radius: 999px; padding: 8px 14px; font-weight: 600; font-size: .92rem;
+    touch-action: none; user-select: none; -webkit-user-select: none; cursor: grab;
+  }
+  .chip.selected { background: var(--accent); box-shadow: 3px 3px 0 var(--ink); }
+  .chip.placed { cursor: default; border-color: var(--ok); color: var(--ok); background: var(--ok-bg); font-size: .85rem; padding: 6px 12px; }
+  .chip.shake { animation: shake .4s; background: var(--bad-bg); border-color: var(--bad); }
+  @keyframes shake { 20%,60% { transform: translateX(-6px); } 40%,80% { transform: translateX(6px); } }
+  .chip.ghost-drag { position: fixed; z-index: 100; pointer-events: none; transform: translate(-50%, -50%) rotate(-3deg); box-shadow: 4px 6px 0 var(--ink); background: var(--accent); }
+  .bins { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+  @media (max-width: 640px) { .bins { grid-template-columns: 1fr; } }
+  .bin { border: 2px solid var(--ink); border-radius: var(--radius); background: var(--card); min-height: 150px; padding: 12px; transition: background .15s, transform .15s; }
+  .bin.over, .bin.armed { background: #F7FDD0; }
+  .bin.over { transform: scale(1.02); }
+  .bin h3 { margin: 0 0 10px; font-size: .95rem; display: flex; justify-content: space-between; }
+  .bin h3 span { color: var(--muted); }
+  .bin .slot { display: flex; flex-wrap: wrap; gap: 6px; }
+  .hint { font-size: .85rem; color: var(--muted); margin: -16px 0 16px; }
+  .defs { display: none; margin-top: 20px; gap: 10px; }
+  .defs.show { display: grid; animation: pop .3s ease-out; }
+  .def { background: var(--ink); color: var(--bg); border-radius: var(--radius); padding: 16px; }
+  .def h3 { margin: 0 0 6px; color: var(--accent); font-size: 1rem; }
+  .def p { margin: 0; font-size: .93rem; }
+
+  /* ---------- Phần 5: Infographic ---------- */
+  .sub { font: 700 13px/1 var(--mono); text-transform: uppercase; margin: 32px 0 14px; }
+  .tiles { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+  @media (max-width: 720px) { .tiles { grid-template-columns: repeat(2, 1fr); } .tiles .tile:last-child { grid-column: span 2; } }
+  .tile { background: var(--card); border: 2px solid var(--ink); border-radius: var(--radius); padding: 14px; }
+  .tile .ic { width: 44px; height: 44px; border-radius: 10px; background: var(--accent); border: 2px solid var(--ink); display: grid; place-items: center; margin-bottom: 10px; }
+  .tile .ic svg { width: 22px; height: 22px; stroke: var(--ink); fill: none; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+  .tile p { margin: 0; font-size: .9rem; font-weight: 500; line-height: 1.4; }
+  .policies { display: flex; flex-direction: column; gap: 8px; }
+  .policy { display: flex; gap: 14px; align-items: center; background: var(--card); border-radius: var(--radius); padding: 14px 16px; border-left: 6px solid var(--accent); }
+  .policy .n { font: 800 22px/1 var(--mono); flex: none; width: 34px; }
+  .policy p { margin: 0; font-weight: 500; }
+  .timeline { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; padding-top: 22px; }
+  .timeline::before { content: ""; position: absolute; top: 7px; left: 8px; right: 8px; height: 3px; background: var(--ink); }
+  .tl { position: relative; }
+  .tl::before { content: ""; position: absolute; top: -22px; left: 0; width: 14px; height: 14px; border-radius: 50%; background: var(--accent); border: 3px solid var(--ink); }
+  .tl b { font: 800 20px/1 var(--mono); display: block; margin-bottom: 4px; }
+  .tl p { margin: 0; font-size: .88rem; }
+  @media (max-width: 640px) {
+    .timeline { grid-template-columns: 1fr; padding: 0 0 0 28px; gap: 18px; }
+    .timeline::before { top: 6px; bottom: 6px; left: 6px; right: auto; width: 3px; height: auto; }
+    .tl::before { top: 2px; left: -28px; }
+  }
+
+  /* ---------- Phần 6: Cam kết ---------- */
+  .pledges { display: flex; flex-direction: column; gap: 8px; }
+  .pledge {
+    display: flex; align-items: center; gap: 12px; background: var(--card); border: 2px solid var(--ink); border-radius: var(--radius);
+    padding: 14px 16px; font: 700 1.05rem/1.3 var(--mono); opacity: 0; transform: translateX(-16px); transition: opacity .45s, transform .45s;
+  }
+  .pledge.in { opacity: 1; transform: none; }
+  .pledge .x { width: 34px; height: 34px; flex: none; border-radius: 8px; background: var(--ink); color: var(--accent); display: grid; place-items: center; font-size: 18px; }
+  .sign { margin-top: 24px; display: flex; gap: 10px; flex-wrap: wrap; }
+  .sign input {
+    flex: 1 1 220px; min-width: 0; border: 2px solid var(--ink); border-radius: 999px; padding: 12px 18px; font: 500 16px var(--sans);
+    background: var(--card); color: var(--ink); outline: none;
+  }
+  .sign input:focus { box-shadow: 0 0 0 4px var(--accent); }
+  .counter { margin: 32px 0 12px; display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; font: 700 15px/1.2 var(--mono); }
+  .counter b { font-size: 40px; background: var(--accent); padding: 0 8px; border: 2px solid var(--ink); }
+  .wall { display: flex; flex-wrap: wrap; gap: 6px; min-height: 40px; }
+  .wall span { background: var(--card); border: 1px solid var(--line); border-radius: 999px; padding: 5px 12px; font-size: .88rem; }
+  .wall span.me { background: var(--accent); border-color: var(--ink); font-weight: 700; }
+  .wall em { color: var(--muted); font-size: .9rem; }
+  .wall-note { font-size: .8rem; color: var(--muted); margin-top: 10px; }
+  .cert-box { display: none; margin-top: 28px; text-align: center; }
+  .cert-box.show { display: block; animation: pop .3s ease-out; }
+  .cert-box canvas { width: min(100%, 320px); height: auto; border-radius: 12px; border: 2px solid var(--ink); box-shadow: 6px 6px 0 var(--ink); }
+  .cert-box .btn { margin-top: 20px; }
+  footer { border-top: 2px solid var(--ink); padding: 40px 0 56px; text-align: center; }
+  footer .slogan { font: 800 clamp(1.1rem, 4vw, 1.5rem)/1.3 var(--mono); margin: 0 0 20px; }
+  footer small { display: block; color: var(--muted); margin-top: 24px; }
+  :focus-visible { outline: 3px solid var(--ink); outline-offset: 2px; }
+</style>
+</head>
+<body>
+
+<nav class="progress" aria-label="Tiến độ">
+  <ol id="steps"></ol>
+</nav>
+
+<!-- Phần 1: Mở đầu -->
+<section id="mo-dau">
+  <div class="ghost-feed" aria-hidden="true" id="ghostFeed"></div>
+  <div class="wrap hero">
+    <div class="brand"><span>TỈNH LƯỚT</span></div>
+    <h1>Tôn giáo từ đâu mà có – <span class="hl">do thần linh</span> hay <span class="hl">do con người</span> tạo ra?</h1>
+    <p>Mỗi ngày bạn lướt qua bao nhiêu nội dung về tôn giáo? Bạn có chắc mình đã phản ứng đúng?</p>
+    <a class="btn" href="#hieu-dung">Bắt đầu lướt →</a>
+    <div class="slogan">Tỉnh táo khi lướt – Tôn trọng khi khác biệt</div>
+  </div>
+</section>
+
+<!-- Phần 2: Hiểu đúng -->
+<section id="hieu-dung">
+  <div class="wrap">
+    <span class="kicker">Phần 2 · Hiểu đúng</span>
+    <h2>12 thẻ lật</h2>
+    <p class="lead">Bấm vào thẻ để lật. Mặt trước là câu hỏi, mặt sau là câu trả lời theo giáo trình.</p>
+    <div id="flipGroups"></div>
+    <div class="flip-count" id="flipCount">Đã lật 0/12 thẻ</div>
+  </div>
+</section>
+
+<!-- Phần 3: Lướt thử -->
+<section id="luot-thu">
+  <div class="wrap">
+    <span class="kicker">Phần 3 · Lướt thử</span>
+    <h2>Bảng tin của bạn</h2>
+    <p class="lead">8 bài đăng, mỗi bài chọn một phản ứng. Chọn đúng được +10 điểm, chọn sai sẽ có giải thích. Mọi tên trong bảng tin đều là tên giả.</p>
+    <div class="scorebar"><span>ĐỘ TỈNH TÁO</span><span><b id="score">0</b> / 80 · <span id="answered">0</span>/8 bài</span></div>
+    <div class="feed" id="feed"></div>
+    <div class="result" id="result" aria-live="polite"></div>
+  </div>
+</section>
+
+<!-- Phần 4: Phân loại -->
+<section id="phan-loai">
+  <div class="wrap">
+    <span class="kicker">Phần 4 · Phân loại</span>
+    <h2>Tín ngưỡng, tôn giáo hay mê tín dị đoan?</h2>
+    <p class="lead">Kéo 9 thẻ vào đúng ô.</p>
+    <p class="hint">Trên điện thoại: chạm vào thẻ rồi chạm vào ô, hoặc giữ và kéo.</p>
+    <div class="pool" id="pool"></div>
+    <div class="bins" id="bins"></div>
+    <div class="defs" id="defs">
+      <div class="def"><h3>TÍN NGƯỠNG</h3><p>Niềm tin của con người vào cái thiêng liêng, cao cả, siêu nhiên, được thể hiện qua những hành vi, nghi lễ thờ cúng gắn với phong tục, tập quán truyền thống để mang lại sự bình an về tinh thần.</p></div>
+      <div class="def"><h3>TÔN GIÁO</h3><p>Một hình thái ý thức xã hội phản ánh hư ảo hiện thực khách quan; là thực thể xã hội có niềm tin, giáo lý, cơ sở thờ tự, tổ chức và tín đồ.</p></div>
+      <div class="def"><h3>MÊ TÍN DỊ ĐOAN</h3><p>Niềm tin mê muội, viển vông, không dựa trên cơ sở khoa học, dẫn đến hành vi cực đoan, sai lệch quá mức, gây tổn hại cho cá nhân, gia đình và cộng đồng.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Phần 5: Tôn giáo ở Việt Nam -->
+<section id="viet-nam">
+  <div class="wrap">
+    <span class="kicker">Phần 5 · Tôn giáo ở Việt Nam</span>
+    <h2>Bức tranh tôn giáo Việt Nam</h2>
+    <div class="sub">5 đặc điểm</div>
+    <div class="tiles" id="tiles"></div>
+    <div class="sub">5 chính sách</div>
+    <div class="policies" id="policies"></div>
+    <div class="sub">Dòng thời gian</div>
+    <div class="timeline">
+      <div class="tl"><b>2003</b><p>Nghị quyết 25-NQ/TW về công tác tôn giáo</p></div>
+      <div class="tl"><b>2013</b><p>Hiến pháp 2013</p></div>
+      <div class="tl"><b>2018</b><p>Luật Tín ngưỡng, tôn giáo có hiệu lực</p></div>
+      <div class="tl"><b>2019</b><p>Luật An ninh mạng có hiệu lực</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- Phần 6: Cam kết -->
+<section id="cam-ket">
+  <div class="wrap">
+    <span class="kicker">Phần 6 · Cam kết</span>
+    <h2>Cam kết “5 không”</h2>
+    <p class="lead">Trước khi bấm chia sẻ bất cứ nội dung nào về tôn giáo:</p>
+    <div class="pledges" id="pledges"></div>
+    <form class="sign" id="signForm" autocomplete="off">
+      <input id="nameInput" maxlength="40" placeholder="Nhập tên của bạn" aria-label="Tên của bạn" required>
+      <button class="btn" type="submit">Tôi cam kết</button>
+    </form>
+    <div class="counter">Đã có <b id="count">0</b> sinh viên cam kết</div>
+    <div class="wall" id="wall"></div>
+    <p class="wall-note">Bức tường cam kết được lưu trên trình duyệt của thiết bị này.</p>
+    <div class="cert-box" id="certBox">
+      <canvas id="cert" width="1080" height="1920" aria-label="Thẻ chứng nhận Người lướt tỉnh táo"></canvas><br>
+      <button class="btn" id="downloadBtn" type="button">Tải ảnh ↓</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <p class="slogan">Tỉnh táo khi lướt –<br>Tôn trọng khi khác biệt</p>
+    <a class="btn ghost" id="blooketLink" href="#" target="_blank" rel="noopener" hidden>Ôn tập 100 câu trên Blooket ↗</a>
+    <small>Sản phẩm sáng tạo · Chủ nghĩa xã hội khoa học · Vấn đề tôn giáo trong thời kỳ quá độ lên CNXH</small>
+  </div>
+</footer>
+
+<script>
+/* Link bộ câu hỏi Blooket 100 câu – điền vào khi có, để trống thì nút bị ẩn. */
+const BLOOKET_URL = "";
+
+const STEPS = [
+  ["mo-dau", "Mở đầu"], ["hieu-dung", "Hiểu đúng"], ["luot-thu", "Lướt thử"],
+  ["phan-loai", "Phân loại"], ["viet-nam", "Việt Nam"], ["cam-ket", "Cam kết"],
+];
+
+const FLIPS = [
+  ["Bản chất", [
+    ["Tôn giáo là gì?", "Hình thái ý thức xã hội phản ánh hư ảo hiện thực khách quan."],
+    ["Ai tạo ra tôn giáo?", "Con người. Nhưng rồi con người lại lệ thuộc vào tôn giáo."],
+    ["Một tôn giáo cần những gì?", "5 tiêu chí: niềm tin, giáo lý, cơ sở thờ tự, tổ chức, tín đồ."],
+  ]],
+  ["Nguồn gốc", [
+    ["Vì sao người xưa thờ thần Sấm?", "Nguồn gốc tự nhiên – kinh tế xã hội: bất lực trước thiên nhiên."],
+    ["Vì sao điều chưa biết sinh ra niềm tin siêu nhiên?", "Nguồn gốc nhận thức: khoảng cách giữa “biết” và “chưa biết”."],
+    ["Vì sao ốm đau người ta hay đi lễ?", "Nguồn gốc tâm lý: sợ hãi, mong bình an, lòng biết ơn."],
+  ]],
+  ["Tính chất", [
+    ["Tôn giáo có thay đổi không?", "Tính lịch sử: có hình thành, biến đổi theo điều kiện xã hội."],
+    ["Có bao nhiêu người theo tôn giáo?", "Tính quần chúng: gần 3/4 dân số thế giới."],
+    ["Tôn giáo có dính đến chính trị không?", "Tính chính trị: xuất hiện khi xã hội có giai cấp, tôn giáo có thể bị lợi dụng."],
+  ]],
+  ["Nguyên tắc", [
+    ["Ai được quyết định bạn theo đạo hay không?", "Chỉ bạn. Tôn trọng tự do tín ngưỡng và không tín ngưỡng."],
+    ["Lợi dụng tôn giáo và niềm tin tôn giáo có giống nhau?", "Không. Phải phân biệt mặt chính trị và mặt tư tưởng."],
+    ["Đánh giá tôn giáo thế nào cho đúng?", "Quan điểm lịch sử – cụ thể, và khắc phục tiêu cực gắn với xây dựng xã hội mới."],
+  ]],
+];
+
+const ICON = {
+  like: '<path d="M7 10v11M3 11h4v10H3zM7 10l4-8a3 3 0 0 1 3 3v4h5.5a2 2 0 0 1 2 2.3l-1.4 8A2 2 0 0 1 18.1 21H7"/>',
+  share: '<path d="M4 12v7a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-7M16 6l-4-4-4 4M12 2v13"/>',
+  verify: '<circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3M8 11l2 2 4-4"/>',
+  report: '<path d="M4 22V4M4 4h13l-2 4 2 4H4"/>',
+  skip: '<path d="M5 4l10 8-10 8zM19 5v14"/>',
+};
+const ACTIONS = [
+  ["like", "Thích"], ["share", "Tin & Chia sẻ"], ["verify", "Kiểm chứng"], ["report", "Báo cáo"], ["skip", "Bỏ qua"],
+];
+const ACTION_LABEL = Object.fromEntries(ACTIONS);
+
+const POSTS = [
+  { name: "CLB Thiện nguyện Chùa X", init: "CX", color: "#F6D98B", time: "2 giờ",
+    text: "Sáng nay nhóm phật tử chùa X đã nấu 500 suất cơm cho bệnh nhân nghèo tại bệnh viện tỉnh. Cảm ơn các cô chú đã chung tay! 🍚",
+    media: { kind: "light", caption: "500 suất cơm nghĩa tình" }, stats: ["2,4K", "186 bình luận", "512 chia sẻ"],
+    ans: "like", fb: "Tôn giáo có giá trị nhân văn, hướng thiện. Mạng xã hội giúp lan tỏa điều tốt." },
+  { name: "Thầy A – Giải hạn Tâm Linh", init: "TA", color: "#C9B8F0", time: "5 giờ · Được tài trợ",
+    text: "‼️ GIẢI HẠN ONLINE – chỉ cần chuyển khoản 5 TRIỆU, thầy làm lễ từ xa, bệnh nan y cũng khỏi. Inbox ngay kẻo lỡ ngày đẹp!",
+    stats: ["891", "1,2K bình luận", "340 chia sẻ"],
+    ans: "report", fb: "Đây là mê tín dị đoan và lợi dụng niềm tin để trục lợi, không phải hoạt động tôn giáo bình thường." },
+  { name: "Tin Nóng 24h", init: "TN", color: "#F2A9A0", time: "1 giờ",
+    text: "Không thể tin nổi 😡😡 Tôn giáo X xúc phạm tôn giáo Y!!! Share mạnh cho mọi người biết!!!",
+    media: { kind: "video", tag: "VIDEO", caption: "“Tôn giáo X xúc phạm tôn giáo Y!!!”" }, stats: ["5,7K", "3,9K bình luận", "2,1K chia sẻ"],
+    ans: "verify", fb: "Nội dung xuyên tạc nhằm chia rẽ. Đây là mặt chính trị, tức mâu thuẫn đối kháng, chứ không phải khác biệt niềm tin." },
+  { name: "Giáo xứ B", init: "GB", color: "#A8D5E2", time: "Đang phát trực tiếp",
+    text: "Trực tiếp Thánh lễ đêm Giáng sinh tại nhà thờ giáo xứ B. Kính chúc mọi người một mùa Giáng sinh an lành.",
+    media: { kind: "video", tag: "● TRỰC TIẾP", caption: "Thánh lễ đêm Giáng sinh" }, stats: ["1,1K", "245 bình luận", "98 chia sẻ"],
+    ans: "like", fb: "Sinh hoạt tôn giáo bình thường được Nhà nước tôn trọng và bảo hộ." },
+  { name: "Người lạ", init: "?", color: "#D6D3D3", time: "Tin nhắn chờ",
+    dm: "SẮP TẬN THẾ rồi bạn ơi. Vào nhóm Z, đóng phí 2 triệu để được cứu. Chỉ còn 3 ngày, đừng nói với gia đình nhé.",
+    ans: "report", fb: "Dấu hiệu tà đạo, hiện tượng tôn giáo mới lợi dụng sự hoang mang. Vi phạm pháp luật." },
+  { name: "Góc Suy Ngẫm", init: "GS", color: "#B7E4C7", time: "3 giờ",
+    text: "Nói thật: người không theo đạo là người vô đạo đức. Ai phản đối thì comment xem nào!",
+    stats: ["642", "2,8K bình luận", "77 chia sẻ"],
+    ans: "skip", fb: "Theo hay không theo đạo đều là quyền tự do. Không kỳ thị cả hai phía – và không lao vào bình luận công kích." },
+  { name: "Tin Tức Mới Nhất", init: "TM", color: "#F7C59F", time: "30 phút",
+    text: "🔴 KHẨN: Nhà nước cấm mọi người đi lễ chùa từ tháng sau! Chia sẻ ngay cho người thân biết!",
+    stats: ["3,3K", "1,5K bình luận", "4,6K chia sẻ"],
+    ans: "verify", fb: "Sai sự thật. Chính sách nhất quán là tôn trọng, bảo đảm quyền tự do tín ngưỡng. Hãy kiểm tra trên cổng thông tin chính thống." },
+  { name: "Du lịch Việt", init: "DV", color: "#E5FD54", time: "Hôm qua",
+    text: "Giỗ Tổ Hùng Vương mùng 10/3 – về Phú Thọ dự lễ hội đền Hùng, hướng về cội nguồn dân tộc. 🇻🇳",
+    media: { kind: "video", tag: "CLIP", caption: "Lễ hội đền Hùng" }, stats: ["8,9K", "412 bình luận", "1,7K chia sẻ"],
+    ans: "like", fb: "Tín ngưỡng thờ cúng tổ tiên, Vua Hùng là sợi dây gắn kết cộng đồng dân tộc." },
+];
+
+const CHIPS = [
+  ["Thờ cúng tổ tiên", "tn"], ["Thờ Mẫu", "tn"], ["Thờ thành hoàng làng", "tn"],
+  ["Phật giáo", "tg"], ["Công giáo", "tg"], ["Cao Đài", "tg"],
+  ["Bỏ thuốc, chữa bệnh bằng bùa", "mt"], ["Đốt vàng mã quá mức, tốn kém", "mt"], ["Cúng giải hạn online chuyển khoản", "mt"],
+];
+const BINS = [["tn", "TÍN NGƯỠNG"], ["tg", "TÔN GIÁO"], ["mt", "MÊ TÍN DỊ ĐOAN"]];
+
+const TRAITS = [
+  ['<path d="M12 2v20M2 12h20"/><circle cx="12" cy="12" r="9"/>', "Nhiều tôn giáo."],
+  ['<path d="M7 11V7a5 5 0 0 1 10 0v4M5 11h14v10H5z"/>', "Đa dạng, chung sống hòa bình, không có chiến tranh tôn giáo."],
+  ['<circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2.5"/><path d="M3 20c0-3.3 2.7-6 6-6s6 2.7 6 6M15 20c0-2 .8-3.8 2-5 2.2 0 4 1.8 4 5"/>', "Tín đồ phần lớn là nhân dân lao động yêu nước."],
+  ['<path d="m12 2 3 6.5 7 .8-5.2 4.8 1.4 7L12 17.6 5.8 21l1.4-7L2 9.3l7-.8z"/>', "Chức sắc có uy tín với tín đồ."],
+  ['<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.5 3.8 5.5 3.8 9s-1.3 6.5-3.8 9c-2.5-2.5-3.8-5.5-3.8-9S9.5 5.5 12 3"/>', "Có quan hệ với tôn giáo nước ngoài."],
+];
+const POLICIES = [
+  "Tôn giáo là nhu cầu tinh thần, tồn tại lâu dài.",
+  "Đại đoàn kết dân tộc.",
+  "Công tác vận động quần chúng là cốt lõi.",
+  "Công tác tôn giáo là trách nhiệm của cả hệ thống chính trị.",
+  "Theo đạo, truyền đạo phải tuân thủ pháp luật.",
+];
+const PLEDGES = ["Không tin ngay", "Không chia sẻ ngay", "Không xuyên tạc", "Không kỳ thị", "Không tiếp tay cho thông tin sai lệch"];
+
+const $ = (s, r = document) => r.querySelector(s);
+const el = (tag, cls, html) => { const e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; };
+const svg = (paths) => `<svg viewBox="0 0 24 24" aria-hidden="true">${paths}</svg>`;
+
+/* ---------- Thanh tiến độ: đánh dấu phần đang xem ---------- */
+const stepsEl = $("#steps");
+STEPS.forEach(([id, label], i) => {
+  const li = el("li");
+  li.innerHTML = `<a href="#${id}" data-id="${id}"><span>${i + 1}. ${label}</span></a>`;
+  stepsEl.append(li);
+});
+const stepLinks = [...stepsEl.querySelectorAll("a")];
+function markStep() {
+  const y = window.scrollY + window.innerHeight * 0.35;
+  let idx = 0;
+  STEPS.forEach(([id], i) => { if (document.getElementById(id).offsetTop <= y) idx = i; });
+  stepLinks.forEach((a, i) => { a.classList.toggle("active", i === idx); a.classList.toggle("done", i < idx); });
+}
+window.addEventListener("scroll", markStep, { passive: true });
+markStep();
+
+/* ---------- Phần 1: bảng tin mờ cuộn phía sau ---------- */
+const ghost = $("#ghostFeed");
+for (let c = 0; c < 3; c++) {
+  const col = el("div", "ghost-col");
+  for (let k = 0; k < 2; k++) for (let p = 0; p < 6; p++) {
+    const post = el("div", "ghost-post", "<i></i><i></i><i style='width:80%'></i>" + ((p + c) % 2 ? "<b></b>" : ""));
+    col.append(post);
+  }
+  ghost.append(col);
+}
+
+/* ---------- Phần 2: thẻ lật ---------- */
+const flipped = new Set();
+FLIPS.forEach(([group, cards], gi) => {
+  $("#flipGroups").append(el("div", "group-title", group));
+  const grid = el("div", "flip-grid");
+  cards.forEach(([q, a], ci) => {
+    const key = gi * 3 + ci;
+    const card = el("button", "flip");
+    card.type = "button";
+    card.setAttribute("aria-label", q);
+    card.innerHTML = `<div class="flip-inner">
+      <div class="face front"><strong>${q}</strong><small>CHẠM ĐỂ LẬT ↻</small></div>
+      <div class="face back"><small>${group.toUpperCase()}</small><p>${a}</p></div></div>`;
+    card.addEventListener("click", () => {
+      card.classList.toggle("flipped");
+      flipped.add(key);
+      $("#flipCount").textContent = `Đã lật ${flipped.size}/12 thẻ` + (flipped.size === 12 ? " – xong! Cuộn xuống để lướt thử ↓" : "");
+    });
+    grid.append(card);
+  });
+  $("#flipGroups").append(grid);
+});
+
+/* ---------- Phần 3: bảng tin giả lập ---------- */
+const answers = new Array(POSTS.length).fill(null);
+let score = 0;
+
+function renderFeed() {
+  const feed = $("#feed");
+  feed.innerHTML = "";
+  POSTS.forEach((p, i) => {
+    const post = el("article", "post");
+    let media = "";
+    if (p.media) {
+      const play = p.media.kind === "video" ? `<div class="play">${'<svg viewBox="0 0 24 24"><path d="M6 4l14 8-14 8z"/></svg>'}</div>` : "";
+      const tag = p.media.tag ? `<span class="tag${p.media.tag.startsWith("●") ? "" : " cap"}">${p.media.tag}</span>` : "";
+      media = `<div class="media ${p.media.kind === "light" ? "light" : ""}">${tag}${play}<div class="caption">${p.media.caption}</div></div>`;
+    }
+    const dm = p.dm ? `<div class="dm"><div class="bubble">${p.dm}</div><small>Người này không có trong danh sách bạn bè của bạn</small></div>` : "";
+    const stats = p.stats ? `<div class="stats"><span>👍 ${p.stats[0]}</span><span>${p.stats[1]} · ${p.stats[2]}</span></div>` : `<div class="stats"><span>Tin nhắn</span><span></span></div>`;
+    post.innerHTML = `
+      <div class="post-head"><div class="avatar" style="background:${p.color}">${p.init}</div>
+        <div class="who"><strong>${p.name}</strong><small>${p.time} · 🌐</small></div></div>
+      ${p.text ? `<div class="post-body"><p>${p.text}</p></div>` : `<div class="post-body"></div>`}
+      ${media}${dm}${stats}
+      <div class="actions">${ACTIONS.map(([k, l]) => `<button type="button" class="act" data-k="${k}">${svg(ICON[k])}${l}</button>`).join("")}</div>
+      <div class="feedback" role="status"></div>`;
+    post.querySelectorAll(".act").forEach((b) => b.addEventListener("click", () => answer(i, b.dataset.k, post)));
+    feed.append(post);
+  });
+}
+
+function answer(i, k, post) {
+  if (answers[i]) return;
+  const p = POSTS[i];
+  const right = k === p.ans;
+  answers[i] = k;
+  if (right) score += 10;
+  post.querySelectorAll(".act").forEach((b) => {
+    b.disabled = true;
+    if (b.dataset.k === k) b.classList.add("picked");
+    if (!right && b.dataset.k === p.ans) b.classList.add("correct-answer");
+  });
+  const fb = post.querySelector(".feedback");
+  fb.className = "feedback show " + (right ? "ok" : "bad");
+  fb.innerHTML = right
+    ? `<b>✓ Chính xác! +10</b>${p.fb}`
+    : `<b>✗ Chưa đúng – nên chọn “${ACTION_LABEL[p.ans]}”</b>${p.fb}`;
+  $("#score").textContent = score;
+  const n = answers.filter(Boolean).length;
+  $("#answered").textContent = n;
+  if (n === POSTS.length) showResult();
+}
+
+function verdict(s) {
+  if (s >= 70) return ["Người lướt tỉnh táo", "#E5FD54", "Bạn phân biệt tốt giữa niềm tin chân chính và hành vi lợi dụng tôn giáo."];
+  if (s >= 40) return ["Cần cẩn thận hơn", "#F7C59F", "Bạn đã đúng nhiều, nhưng vẫn có lúc phản ứng theo cảm xúc. Hãy chậm lại trước khi bấm."];
+  return ["Dễ bị dắt mũi", "#F2A9A0", "Thông tin sai lệch dễ khiến bạn tin và chia sẻ. Lướt lại để luyện thêm nhé."];
+}
+
+function showResult() {
+  const [title, color, msg] = verdict(score);
+  const r = $("#result");
+  r.innerHTML = `<div class="mono">KẾT QUẢ</div><div class="big">${score}<small style="font-size:20px">/80</small></div>
+    <div class="badge" style="background:${color}">${title}</div><p>${msg}</p>
+    <button class="btn${score < 40 ? "" : " ghost"}" type="button" id="retry">↻ Lướt lại</button>
+    ${score >= 40 ? ' <a class="btn" href="#phan-loai">Tiếp tục →</a>' : ""}`;
+  r.classList.add("show");
+  $("#retry").addEventListener("click", resetFeed);
+  r.scrollIntoView({ behavior: "smooth", block: "center" });
+}
+
+function resetFeed() {
+  answers.fill(null);
+  score = 0;
+  $("#score").textContent = 0;
+  $("#answered").textContent = 0;
+  $("#result").classList.remove("show");
+  renderFeed();
+  $("#luot-thu").scrollIntoView({ behavior: "smooth" });
+}
+renderFeed();
+
+/* ---------- Phần 4: kéo thả phân loại (chuột, cảm ứng, hoặc chạm-chọn) ---------- */
+const pool = $("#pool");
+let selected = null;
+let placedCount = 0;
+BINS.forEach(([k, label]) => {
+  const bin = el("div", "bin", `<h3>${label}<span>0/3</span></h3><div class="slot"></div>`);
+  bin.dataset.k = k;
+  bin.addEventListener("click", () => { if (selected) drop(selected, bin); });
+  $("#bins").append(bin);
+});
+CHIPS.sort(() => Math.random() - 0.5).forEach(([text, k]) => {
+  const chip = el("div", "chip", text);
+  chip.dataset.k = k;
+  chip.tabIndex = 0;
+  chip.setAttribute("role", "button");
+  attachDrag(chip);
+  chip.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); select(chip); } });
+  pool.append(chip);
+});
+
+function select(chip) {
+  if (chip.classList.contains("placed")) return;
+  const same = selected === chip;
+  document.querySelectorAll(".chip.selected").forEach((c) => c.classList.remove("selected"));
+  document.querySelectorAll(".bin").forEach((b) => b.classList.toggle("armed", !same));
+  selected = same ? null : chip;
+  if (selected) chip.classList.add("selected");
+}
+
+function drop(chip, bin) {
+  document.querySelectorAll(".bin").forEach((b) => b.classList.remove("armed", "over"));
+  chip.classList.remove("selected");
+  selected = null;
+  if (chip.dataset.k !== bin.dataset.k) {
+    chip.classList.remove("shake"); void chip.offsetWidth; chip.classList.add("shake");
+    setTimeout(() => chip.classList.remove("shake"), 450);
+    return;
+  }
+  chip.classList.add("placed");
+  chip.tabIndex = -1;
+  bin.querySelector(".slot").append(chip);
+  const n = bin.querySelectorAll(".chip").length;
+  bin.querySelector("h3 span").textContent = `${n}/3`;
+  if (++placedCount === CHIPS.length) {
+    pool.style.display = "none";
+    $(".hint").style.display = "none";
+    $("#defs").classList.add("show");
+  }
+}
+
+function attachDrag(chip) {
+  chip.addEventListener("pointerdown", (e) => {
+    if (chip.classList.contains("placed")) return;
+    const start = { x: e.clientX, y: e.clientY };
+    let ghostEl = null;
+    let overBin = null;
+    chip.setPointerCapture(e.pointerId);
+    const move = (ev) => {
+      if (!ghostEl && Math.hypot(ev.clientX - start.x, ev.clientY - start.y) > 6) {
+        ghostEl = el("div", "chip ghost-drag", chip.textContent);
+        document.body.append(ghostEl);
+        chip.style.opacity = ".3";
+      }
+      if (!ghostEl) return;
+      ghostEl.style.left = ev.clientX + "px";
+      ghostEl.style.top = ev.clientY + "px";
+      const target = document.elementFromPoint(ev.clientX, ev.clientY)?.closest(".bin");
+      if (target !== overBin) { overBin?.classList.remove("over"); target?.classList.add("over"); overBin = target; }
+    };
+    const up = () => {
+      chip.removeEventListener("pointermove", move);
+      chip.removeEventListener("pointerup", up);
+      chip.removeEventListener("pointercancel", up);
+      if (ghostEl) {
+        ghostEl.remove();
+        chip.style.opacity = "";
+        if (overBin) drop(chip, overBin);
+      } else {
+        select(chip);
+      }
+    };
+    chip.addEventListener("pointermove", move);
+    chip.addEventListener("pointerup", up);
+    chip.addEventListener("pointercancel", up);
+  });
+}
+
+/* ---------- Phần 5: infographic ---------- */
+TRAITS.forEach(([ic, t]) => $("#tiles").append(el("div", "tile", `<div class="ic">${svg(ic)}</div><p>${t}</p>`)));
+POLICIES.forEach((t, i) => $("#policies").append(el("div", "policy", `<span class="n">0${i + 1}</span><p>${t}</p>`)));
+
+/* ---------- Phần 6: cam kết, bức tường, chứng nhận ---------- */
+PLEDGES.forEach((t) => $("#pledges").append(el("div", "pledge", `<span class="x">✕</span>${t}`)));
+const pledgeObs = new IntersectionObserver((entries) => {
+  entries.forEach((en) => {
+    if (!en.isIntersecting) return;
+    document.querySelectorAll(".pledge").forEach((p, i) => setTimeout(() => p.classList.add("in"), i * 280));
+    pledgeObs.disconnect();
+  });
+}, { threshold: 0.3 });
+pledgeObs.observe($("#pledges"));
+
+const WALL_KEY = "tinhluot.wall.v1";
+const loadWall = () => { try { return JSON.parse(localStorage.getItem(WALL_KEY)) || []; } catch { return []; } };
+const saveWall = (w) => { try { localStorage.setItem(WALL_KEY, JSON.stringify(w)); } catch {} };
+let myName = null;
+
+function renderWall() {
+  const w = loadWall();
+  $("#count").textContent = w.length;
+  const wall = $("#wall");
+  wall.innerHTML = "";
+  if (!w.length) { wall.innerHTML = "<em>Hãy là người đầu tiên ký cam kết.</em>"; return; }
+  w.slice().reverse().forEach((e) => {
+    const s = el("span", e.name === myName ? "me" : "");
+    s.textContent = e.name;
+    wall.append(s);
+  });
+}
+renderWall();
+
+$("#signForm").addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = $("#nameInput").value.trim().replace(/\s+/g, " ");
+  if (!name) return;
+  const w = loadWall();
+  w.push({ name, score: answers.some(Boolean) ? score : null, t: Date.now() });
+  saveWall(w);
+  myName = name;
+  renderWall();
+  $("#nameInput").value = "";
+  await drawCert(name);
+  $("#certBox").classList.add("show");
+  $("#certBox").scrollIntoView({ behavior: "smooth", block: "center" });
+});
+
+function wrapText(ctx, text, x, y, maxW, lh) {
+  const words = text.split(" ");
+  let line = "";
+  const lines = [];
+  for (const w of words) {
+    const test = line ? line + " " + w : w;
+    if (ctx.measureText(test).width > maxW && line) { lines.push(line); line = w; } else line = test;
+  }
+  lines.push(line);
+  lines.forEach((l, i) => ctx.fillText(l, x, y + i * lh));
+  return lines.length;
+}
+
+async function drawCert(name) {
+  try { await document.fonts.ready; } catch {}
+  const c = $("#cert");
+  const ctx = c.getContext("2d");
+  const W = c.width, H = c.height;
+  const MONO = '"JetBrains Mono", monospace', SANS = '"Be Vietnam Pro", sans-serif';
+  ctx.fillStyle = "#EDEDED"; ctx.fillRect(0, 0, W, H);
+  // khung viền
+  ctx.strokeStyle = "#1E1A1B"; ctx.lineWidth = 8; ctx.strokeRect(60, 60, W - 120, H - 120);
+  ctx.fillStyle = "#1E1A1B"; ctx.fillRect(60, 60, W - 120, 150);
+  ctx.fillStyle = "#E5FD54"; ctx.font = `800 52px ${MONO}`; ctx.textAlign = "center";
+  ctx.fillText("TỈNH LƯỚT", W / 2, 158);
+
+  ctx.fillStyle = "#1E1A1B"; ctx.font = `700 40px ${MONO}`;
+  ctx.fillText("CHỨNG NHẬN", W / 2, 400);
+  // dải nhấn tiêu đề
+  ctx.font = `800 82px ${MONO}`;
+  const t1 = "NGƯỜI LƯỚT", t2 = "TỈNH TÁO";
+  [[t1, 540], [t2, 650]].forEach(([t, y]) => {
+    const w = ctx.measureText(t).width;
+    ctx.fillStyle = "#E5FD54"; ctx.fillRect(W / 2 - w / 2 - 20, y - 76, w + 40, 100);
+    ctx.fillStyle = "#1E1A1B"; ctx.fillText(t, W / 2, y);
+  });
+
+  ctx.font = `500 38px ${SANS}`; ctx.fillStyle = "#6B6567";
+  ctx.fillText("Trao cho", W / 2, 830);
+  ctx.fillStyle = "#1E1A1B"; ctx.font = `700 76px ${SANS}`;
+  let size = 76;
+  while (ctx.measureText(name).width > W - 240 && size > 40) { size -= 4; ctx.font = `700 ${size}px ${SANS}`; }
+  ctx.fillText(name, W / 2, 940);
+  ctx.fillRect(W / 2 - 200, 980, 400, 4);
+
+  const played = answers.some(Boolean);
+  ctx.font = `700 34px ${MONO}`; ctx.fillStyle = "#6B6567";
+  ctx.fillText("ĐỘ TỈNH TÁO", W / 2, 1120);
+  ctx.fillStyle = "#1E1A1B"; ctx.font = `800 150px ${MONO}`;
+  ctx.fillText(played ? String(score) : "—", W / 2, 1280);
+  ctx.font = `700 40px ${MONO}`;
+  ctx.fillText(played ? `/ 80 · ${verdict(score)[0]}` : "Chưa lướt thử", W / 2, 1350);
+
+  ctx.font = `600 34px ${SANS}`; ctx.fillStyle = "#1E1A1B";
+  ctx.fillText("Đã cam kết “5 không”", W / 2, 1490);
+  ctx.font = `500 30px ${SANS}`; ctx.fillStyle = "#6B6567";
+  wrapText(ctx, PLEDGES.join(" · "), W / 2, 1545, W - 260, 44);
+
+  ctx.fillStyle = "#1E1A1B"; ctx.fillRect(60, H - 270, W - 120, 210);
+  ctx.fillStyle = "#E5FD54"; ctx.font = `800 42px ${MONO}`;
+  ctx.fillText("Tỉnh táo khi lướt –", W / 2, H - 175);
+  ctx.fillText("Tôn trọng khi khác biệt", W / 2, H - 115);
+}
+
+$("#downloadBtn").addEventListener("click", () => {
+  const a = document.createElement("a");
+  a.download = `tinh-luot-${(myName || "chung-nhan").normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/đ/gi, "d").replace(/[^a-z0-9]+/gi, "-").toLowerCase()}.png`;
+  a.href = $("#cert").toDataURL("image/png");
+  a.click();
+});
+
+if (BLOOKET_URL) { const b = $("#blooketLink"); b.href = BLOOKET_URL; b.hidden = false; }
+</script>
+</body>
+</html>
