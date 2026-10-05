@@ -12,6 +12,7 @@ import { SectionHeading } from "@/components/shared/section-heading";
 import { NoiseMarquee } from "@/components/shared/noise-marquee";
 import { drawCertificate, certificateFileName } from "@/lib/certificate";
 import { submitPledge, usePledgeWall, type PledgeResult } from "@/lib/pledges";
+import { useDisplayName } from "@/lib/firebase";
 
 export function PledgeSection({
   offs,
@@ -26,7 +27,10 @@ export function PledgeSection({
 }) {
   const remaining = offs.filter((o) => !o).length;
   const allOff = remaining === 0;
-  const [name, setName] = useState("");
+  // null = người dùng chưa gõ gì: hiện sẵn tên hiển thị (nếu đã đặt ở /bo-phieu hoặc lần ký trước).
+  const display = useDisplayName();
+  const [typed, setTyped] = useState<string | null>(null);
+  const name = typed ?? display.name ?? "";
   const { slogan: SLOGAN, blooketUrl: BLOOKET_URL, pledges: PLEDGE_TEXT } = useContent();
   const { entries: wall, live } = usePledgeWall();
   const [me, setMe] = useState<string | null>(null);
@@ -46,7 +50,8 @@ export function PledgeSection({
     setResult(await submitPledge(clean, played ? score : null));
     setSending(false);
     setMe(clean);
-    setName("");
+    setTyped("");
+    if (clean !== display.name) display.save(clean);
   };
 
   const download = () => {
@@ -142,7 +147,7 @@ export function PledgeSection({
                 <Input
                   id="pledge-name"
                   value={name}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setTyped(e.target.value)}
                   maxLength={40}
                   disabled={!allOff}
                   placeholder="Tên của bạn"

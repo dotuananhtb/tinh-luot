@@ -1,7 +1,7 @@
 "use client";
 
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signInAnonymously, type User } from "firebase/auth";
+import { getAuth, onAuthStateChanged, signInAnonymously, updateProfile, type User } from "firebase/auth";
 import { getDatabase, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { firebaseConfig } from "./firebase-config";
@@ -34,6 +34,34 @@ export async function ensureAnonUid(): Promise<string | null> {
   } catch {
     return null;
   }
+}
+
+/**
+ * Tên hiển thị gắn vào tài khoản (kể cả tài khoản ẩn danh) qua Firebase Auth profile:
+ * không cần đăng ký, mở lại trên cùng thiết bị vẫn còn.
+ */
+export function useDisplayName() {
+  const user = useUser();
+  // updateProfile không phát lại onAuthStateChanged, nên giữ bản vừa lưu ở state.
+  const [saved, setSaved] = useState<string | null>(null);
+  const name = saved ?? user?.displayName ?? null;
+
+  const save = async (raw: string) => {
+    const clean = raw.trim().replace(/\s+/g, " ").slice(0, 40);
+    if (!clean) return false;
+    if (!(await ensureAnonUid())) return false;
+    const current = auth().currentUser;
+    if (!current) return false;
+    try {
+      await updateProfile(current, { displayName: clean });
+      setSaved(clean);
+      return true;
+    } catch {
+      return false;
+    }
+  };
+
+  return { name, ready: user !== undefined, save };
 }
 
 export type LiveValue<T> = { data: T | null; loading: boolean; error: boolean };

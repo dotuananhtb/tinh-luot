@@ -2,25 +2,41 @@
 
 import { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { ArrowRight, Check, Hourglass, WifiOff } from "lucide-react";
+import { ArrowRight, Check, Hourglass, Pencil, WifiOff } from "lucide-react";
 import { REACTIONS, type Reaction } from "@/lib/content";
 import { castVote, myVote, useLive, useVoteCounts } from "@/lib/live";
+import { useDisplayName } from "@/lib/firebase";
 import { cn } from "@/lib/utils";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { useContent } from "@/components/content-provider";
 import { PostBody, REACTION_ICON } from "@/components/sections/feed-section";
 import { VoteBars } from "./vote-bars";
 
 const homeHref = (hash = "") => `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/${hash}`;
 
-function Frame({ children }: { children: React.ReactNode }) {
+type Greeting = { name: string | null; onEdit: () => void } | undefined;
+
+function Frame({ children, greeting }: { children: React.ReactNode; greeting?: Greeting }) {
   return (
     <main className="min-h-dvh bg-paper">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur">
         <span className="border-2 border-ink bg-lime px-2 py-0.5 font-mono text-xs font-extrabold tracking-[0.2em]">TỈNH LƯỚT</span>
-        <span className="flex items-center gap-1.5 font-mono text-xs font-bold">
-          <span className="size-2 animate-pulse rounded-full bg-alarm" /> BỎ PHIẾU TRỰC TIẾP
-        </span>
+        {greeting?.name ? (
+          <button
+            type="button"
+            onClick={greeting.onEdit}
+            className="flex min-h-11 max-w-[60%] cursor-pointer items-center gap-1.5 rounded-full px-2 text-sm font-semibold"
+            aria-label={`Đổi tên hiển thị (đang là ${greeting.name})`}
+          >
+            <span className="truncate">Chào, {greeting.name}</span>
+            <Pencil className="size-3.5 shrink-0" />
+          </button>
+        ) : (
+          <span className="flex items-center gap-1.5 font-mono text-xs font-bold">
+            <span className="size-2 animate-pulse rounded-full bg-alarm" /> BỎ PHIẾU TRỰC TIẾP
+          </span>
+        )}
       </header>
       <div className="mx-auto max-w-md px-4 py-6">{children}</div>
     </main>
@@ -38,6 +54,49 @@ function Notice({ icon, title, body, cta }: { icon: React.ReactNode; title: stri
   );
 }
 
+/** Đặt tên hiển thị cho tài khoản ẩn danh. Không bắt buộc: có thể bỏ qua. */
+function NameCard({ initial, editing, onSave, onSkip }: { initial: string; editing: boolean; onSave: (n: string) => Promise<boolean>; onSkip: () => void }) {
+  const [value, setValue] = useState(initial);
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState(false);
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!value.trim()) return;
+    setBusy(true);
+    const ok = await onSave(value);
+    setBusy(false);
+    setError(!ok);
+  };
+  return (
+    <form onSubmit={submit} className="mt-8 rounded-2xl border-2 border-ink bg-white p-6 shadow-[6px_6px_0_var(--ink)]">
+      <h1 className="font-mono text-xl font-extrabold">{editing ? "Đổi tên hiển thị" : "Bạn tên gì?"}</h1>
+      <p className="mt-1 text-sm text-muted-ink">Không cần đăng ký. Tên chỉ gắn với thiết bị này.</p>
+      <label htmlFor="display-name" className="mt-5 mb-1.5 block text-sm font-bold">
+        Tên hiển thị
+      </label>
+      <Input
+        id="display-name"
+        value={value}
+        onChange={(e) => setValue(e.target.value)}
+        maxLength={40}
+        autoComplete="nickname"
+        autoFocus
+        placeholder="Ví dụ: Lan Anh"
+        className="h-12 rounded-xl border-2 bg-white px-4 text-base"
+      />
+      {error && <p className="mt-2 text-sm font-semibold text-alarm" role="alert">Chưa lưu được tên. Kiểm tra mạng rồi thử lại.</p>}
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <Button type="submit" size="lg" disabled={!value.trim() || busy}>
+          {busy ? "Đang lưu…" : editing ? "Lưu tên" : "Vào bỏ phiếu"} <ArrowRight />
+        </Button>
+        <Button type="button" variant="ghost" onClick={onSkip}>
+          {editing ? "Hủy" : "Bỏ qua"}
+        </Button>
+      </div>
+    </form>
+  );
+}
+
 /** Màn hình điện thoại của khán giả: đi theo bài đăng MC đang chiếu. */
 export function VoteApp() {
   const live = useLive();
@@ -49,6 +108,10 @@ export function VoteApp() {
   const [mine, setMine] = useState<{ key: string; reaction: Reaction | null } | null>(null);
   const [busy, setBusy] = useState(false);
   const [offline, setOffline] = useState(false);
+  const display = useDisplayName();
+  const [editingName, setEditingName] = useState(false);
+  const [skippedName, setSkippedName] = useState(false);
+  const greeting: Greeting = { name: display.name, onEdit: () => setEditingName(true) };
 
   useEffect(() => {
     if (!state || !key) return;
@@ -59,10 +122,27 @@ export function VoteApp() {
     };
   }, [key]); // eslint-disable-line react-hooks/exhaustive-deps -- chỉ cần chạy lại khi đổi bài/buổi
 
-  if (live.loading) return <Frame><Notice icon={<Hourglass />} title="Đang kết nối…" body="Chờ một chút nhé." /></Frame>;
+  if (display.ready && (editingName || (!display.name && !skippedName))) {
+    return (
+      <Frame greeting={greeting}>
+        <NameCard
+          initial={display.name ?? ""}
+          editing={editingName}
+          onSave={async (n) => {
+            const ok = await display.save(n);
+            if (ok) setEditingName(false);
+            return ok;
+          }}
+          onSkip={() => (editingName ? setEditingName(false) : setSkippedName(true))}
+        />
+      </Frame>
+    );
+  }
+
+  if (live.loading) return <Frame greeting={greeting}><Notice icon={<Hourglass />} title="Đang kết nối…" body="Chờ một chút nhé." /></Frame>;
   if (live.error || !state) {
     return (
-      <Frame>
+      <Frame greeting={greeting}>
         <Notice
           icon={<WifiOff />}
           title="Chưa kết nối được"
@@ -75,7 +155,7 @@ export function VoteApp() {
 
   if (state.screen === "pledge") {
     return (
-      <Frame>
+      <Frame greeting={greeting}>
         <Notice
           icon={<Check />}
           title="Đến lúc cam kết!"
@@ -87,7 +167,7 @@ export function VoteApp() {
   }
 
   if (state.screen === "idle") {
-    return <Frame><Notice icon={<Hourglass />} title="Chờ MC bắt đầu" body="Giữ màn hình này. Bài đăng sẽ tự hiện khi bắt đầu bỏ phiếu." /></Frame>;
+    return <Frame greeting={greeting}><Notice icon={<Hourglass />} title="Chờ MC bắt đầu" body="Giữ màn hình này. Bài đăng sẽ tự hiện khi bắt đầu bỏ phiếu." /></Frame>;
   }
 
   const post = posts[state.post];
@@ -104,7 +184,7 @@ export function VoteApp() {
   };
 
   return (
-    <Frame>
+    <Frame greeting={greeting}>
       <p className="mb-3 font-mono text-xs font-bold">
         BÀI {state.post + 1}/{posts.length} · {state.reveal ? "ĐÃ LẬT ĐÁP ÁN" : voted ? "ĐÃ BỎ PHIẾU" : "BẠN SẼ PHẢN ỨNG THẾ NÀO?"}
       </p>
