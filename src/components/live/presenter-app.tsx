@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { useContent } from "@/components/content-provider";
 import { SignOutButton } from "@/components/editor-gate";
-import { PostBody } from "@/components/sections/feed-section";
+import { PostBody } from "@/components/shared/post-body";
 import { QrCode, useSiteUrl } from "./qr-code";
 import { VoteBars } from "./vote-bars";
 import { CountUp } from "@/components/fx/count-up";

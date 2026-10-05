@@ -1,7 +1,7 @@
 "use client";
 
 import { getApp, getApps, initializeApp } from "firebase/app";
-import { getAuth, onAuthStateChanged, signInAnonymously, updateProfile, type User } from "firebase/auth";
+import type { Auth, User } from "firebase/auth";
 import { getDatabase, onValue, ref } from "firebase/database";
 import { useEffect, useState } from "react";
 import { firebaseConfig } from "./firebase-config";
@@ -11,8 +11,18 @@ function app() {
   return getApps().length ? getApp() : initializeApp(firebaseConfig);
 }
 export const db = () => getDatabase(app());
-export const auth = () => getAuth(app());
 export const dbRef = (path: string) => ref(db(), path);
+
+/**
+ * Module Auth khá nặng nên chỉ tải khi cần (ký cam kết, bỏ phiếu, đăng nhập biên tập).
+ * Đọc nội dung / bức tường cam kết chỉ dùng Database, không phải chờ Auth.
+ */
+let authMod: Promise<typeof import("firebase/auth")> | null = null;
+export const loadAuth = () => (authMod ??= import("firebase/auth"));
+export async function getAuthInstance(): Promise<Auth> {
+  const m = await loadAuth();
+  return m.getAuth(app());
+}
 
 /** Email → khóa hợp lệ của RTDB (dấu chấm không được phép trong khóa). */
 export const emailKey = (email: string) => email.trim().toLowerCase().replaceAll(".", ",");
@@ -20,16 +30,27 @@ export const emailKey = (email: string) => email.trim().toLowerCase().replaceAll
 /** Người dùng hiện tại; `undefined` khi đang chờ Firebase trả lời. */
 export function useUser() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
-  useEffect(() => onAuthStateChanged(auth(), setUser), []);
+  useEffect(() => {
+    let unsub = () => {};
+    let alive = true;
+    loadAuth().then((m) => {
+      if (alive) unsub = m.onAuthStateChanged(m.getAuth(app()), setUser);
+    });
+    return () => {
+      alive = false;
+      unsub();
+    };
+  }, []);
   return user;
 }
 
 /** Bảo đảm có phiên ẩn danh (khán giả). Trả về uid, hoặc null nếu Firebase Auth chưa bật / mất mạng. */
 export async function ensureAnonUid(): Promise<string | null> {
   try {
-    const a = auth();
+    const m = await loadAuth();
+    const a = m.getAuth(app());
     if (a.currentUser) return a.currentUser.uid;
-    const cred = await signInAnonymously(a);
+    const cred = await m.signInAnonymously(a);
     return cred.user.uid;
   } catch {
     return null;
@@ -50,10 +71,11 @@ export function useDisplayName() {
     const clean = raw.trim().replace(/\s+/g, " ").slice(0, 40);
     if (!clean) return false;
     if (!(await ensureAnonUid())) return false;
-    const current = auth().currentUser;
+    const m = await loadAuth();
+    const current = m.getAuth(app()).currentUser;
     if (!current) return false;
     try {
-      await updateProfile(current, { displayName: clean });
+      await m.updateProfile(current, { displayName: clean });
       setSaved(clean);
       return true;
     } catch {

@@ -34,6 +34,7 @@ MC, người thao tác và người kiểm duyệt **đều phải là biên t�
 - [ ] Rủ trước 10–15 bạn ngoài nhóm vào ký cam kết thử, để bộ đếm không bắt đầu từ 0.
 
 ### Ngày hôm trước
+- [ ] Sau lần sửa nội dung **cuối cùng**, owner vào GitHub repo → tab **Actions** → **Deploy to GitHub Pages** → **Run workflow**. Nội dung mới sẽ được nhúng sẵn vào trang, nên cả lớp quét QR thấy đúng chữ ngay, không bị đổi chữ sau khi tải.
 - [ ] Owner bấm **Tắt mã** mời trong `/quan-tri` → **Thành viên**, để người ngoài không vào được nữa.
 - [ ] Quay sẵn **video demo dự phòng** (khoảng 2 phút) phòng khi mạng lớp hỏng hẳn.
 - [ ] Sạc đầy laptop, điện thoại MC, mang theo cục phát wifi hoặc bật sẵn 4G để phát hotspot.
@@ -115,4 +116,5 @@ Các nút dưới chân màn hình làm được đúng những việc trên, MC
 ## 8. Sau buổi diễn
 - [ ] Ở Tab B, màn Cam kết: **chụp màn hình bộ đếm + bức tường tên** làm minh chứng lan tỏa (tiêu chí "Khả năng lan tỏa").
 - [ ] Owner kiểm tra mã mời đã tắt.
-- [ ] Gửi link trang chính vào nhóm lớp để các bạn chơi lại và nhận chứng nhận.
+- [ ] Gửi link trang chính vào nhóm lớp để các bạn chơi lại và nhận chứng nhận. Dán link vào Zalo/Messenger sẽ hiện ảnh xem trước của "Tỉnh Lướt".
+- [ ] Nhắc các bạn bấm **"Chia sẻ lên story"** ở thẻ chứng nhận: trên điện thoại sẽ mở thẳng bảng chia sẻ (Instagram, Facebook, Zalo).

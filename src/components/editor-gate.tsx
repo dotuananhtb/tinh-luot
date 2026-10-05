@@ -4,7 +4,7 @@ import { createContext, useContext, useState } from "react";
 import { GoogleAuthProvider, signInWithPopup, signOut, type User } from "firebase/auth";
 import { set } from "firebase/database";
 import { KeyRound, LogIn, LogOut, ShieldAlert } from "lucide-react";
-import { auth, dbRef, emailKey, useDbValue, useUser } from "@/lib/firebase";
+import { dbRef, emailKey, getAuthInstance, useDbValue, useUser } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 
@@ -91,7 +91,7 @@ export function EditorGate({ title, children }: { title: string; children: React
   const login = async () => {
     setError(null);
     try {
-      await signInWithPopup(auth(), new GoogleAuthProvider());
+      await signInWithPopup(await getAuthInstance(), new GoogleAuthProvider());
     } catch (e) {
       const code = (e as { code?: string }).code ?? "";
       setError(
@@ -132,7 +132,7 @@ export function EditorGate({ title, children }: { title: string; children: React
           Nhập mã mời, hoặc gửi email <b className="text-ink">{user.email}</b> cho trưởng nhóm để được thêm vào danh sách.
         </p>
         <InviteForm user={user} />
-        <Button variant="outline" onClick={() => signOut(auth())}>
+        <Button variant="outline" onClick={async () => signOut(await getAuthInstance())}>
           <LogOut /> Đăng xuất
         </Button>
       </Shell>
@@ -144,7 +144,7 @@ export function EditorGate({ title, children }: { title: string; children: React
 
 export function SignOutButton() {
   return (
-    <Button variant="outline" size="sm" onClick={() => signOut(auth())}>
+    <Button variant="outline" size="sm" onClick={async () => signOut(await getAuthInstance())}>
       <LogOut /> Đăng xuất
     </Button>
   );

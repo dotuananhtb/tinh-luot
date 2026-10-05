@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
-import { BellOff, Download, ExternalLink } from "lucide-react";
+import { BellOff, Download, ExternalLink, Share2 } from "lucide-react";
 import { PLEDGES } from "@/lib/content";
 import { useContent } from "@/components/content-provider";
 import { cn } from "@/lib/utils";
@@ -58,12 +58,30 @@ export function PledgeSection({
     if (clean !== display.name) display.save(clean);
   };
 
-  const download = () => {
+  const saveFile = () => {
     if (!canvasRef.current || !me) return;
     const a = document.createElement("a");
     a.download = certificateFileName(me);
     a.href = canvasRef.current.toDataURL("image/png");
     a.click();
+  };
+
+  // Điện thoại: mở bảng chia sẻ của hệ điều hành (đăng story Instagram/Facebook/Zalo, lưu ảnh).
+  // Máy không hỗ trợ chia sẻ file thì tải ảnh như bình thường.
+  const share = async () => {
+    const canvas = canvasRef.current;
+    if (!canvas || !me) return;
+    const blob = await new Promise<Blob | null>((res) => canvas.toBlob(res, "image/png"));
+    const file = blob && new File([blob], certificateFileName(me), { type: "image/png" });
+    if (file && navigator.canShare?.({ files: [file] })) {
+      try {
+        await navigator.share({ files: [file], title: "Người lướt tỉnh táo", text: `${SLOGAN} #TinhLuot` });
+        return;
+      } catch (e) {
+        if ((e as Error).name === "AbortError") return; // người dùng đóng bảng chia sẻ
+      }
+    }
+    saveFile();
   };
 
   return (
@@ -208,9 +226,14 @@ export function PledgeSection({
                 aria-label={`Thẻ chứng nhận Người lướt tỉnh táo của ${me}`}
                 className="h-auto w-[min(100%,320px)] rounded-xl border-2 border-ink shadow-[8px_8px_0_var(--ink)]"
               />
-              <Button className="mt-6" onClick={download}>
-                <Download /> Tải ảnh để đăng story
-              </Button>
+              <div className="mt-6 flex flex-wrap justify-center gap-3">
+                <Button onClick={share}>
+                  <Share2 /> Chia sẻ lên story
+                </Button>
+                <Button variant="outline" onClick={saveFile}>
+                  <Download /> Tải ảnh
+                </Button>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

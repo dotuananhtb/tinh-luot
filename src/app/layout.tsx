@@ -21,9 +21,22 @@ const display = Oswald({
   weight: "700",
 });
 
+const description =
+  "Soi tin tôn giáo trên mạng bằng tư duy biện chứng: lướt thử, bỏ phiếu, cam kết “5 không”. Sản phẩm sáng tạo về vấn đề tôn giáo trong thời kỳ quá độ lên CNXH.";
+
 export const metadata: Metadata = {
+  // URL tuyệt đối cho ảnh xem trước khi chia sẻ link (Zalo, Messenger, Facebook).
+  metadataBase: new URL("https://dotuananhtb.github.io"), // Next tự thêm basePath /tinh-luot
   title: "Tỉnh Lướt",
-  description: "Tỉnh táo khi lướt – Tôn trọng khi khác biệt. Sản phẩm sáng tạo về vấn đề tôn giáo trong thời kỳ quá độ lên CNXH.",
+  description,
+  openGraph: {
+    title: "Tỉnh Lướt – Tỉnh táo khi lướt, Tôn trọng khi khác biệt",
+    description,
+    siteName: "Tỉnh Lướt",
+    locale: "vi_VN",
+    type: "website",
+  },
+  twitter: { card: "summary_large_image", title: "Tỉnh Lướt – Tỉnh táo khi lướt, Tôn trọng khi khác biệt", description },
 };
 
 export const viewport: Viewport = {

@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { AnimatePresence, motion } from "motion/react";
 import { ArrowRight, Check, Hourglass, Pencil, WifiOff } from "lucide-react";
 import { REACTIONS, type Reaction } from "@/lib/content";
 import { castVote, myVote, useLive, useVoteCounts } from "@/lib/live";
@@ -10,7 +9,7 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useContent } from "@/components/content-provider";
-import { PostBody, REACTION_ICON } from "@/components/sections/feed-section";
+import { PostBody, REACTION_ICON } from "@/components/shared/post-body";
 import { VoteBars } from "./vote-bars";
 import { burst } from "@/lib/celebrate";
 
@@ -222,16 +221,14 @@ export function VoteApp() {
 
       {offline && <p className="mt-3 text-sm font-semibold text-alarm" role="alert">Chưa gửi được phiếu. Kiểm tra mạng rồi thử lại.</p>}
 
-      <AnimatePresence>
-        {voted && !state.reveal && (
-          <motion.p initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="mt-4 text-center font-mono text-sm font-bold">
+      {voted && !state.reveal && (
+          <p className="mt-4 animate-in text-center font-mono text-sm font-bold duration-300 fade-in slide-in-from-bottom-2">
             Đã ghi phiếu. Nhìn lên màn chiếu, chờ MC lật đáp án!
-          </motion.p>
+          </p>
         )}
-      </AnimatePresence>
 
       {state.reveal && (
-        <motion.div initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} className="mt-5 space-y-4">
+        <div className="mt-5 animate-in space-y-4 duration-300 fade-in slide-in-from-bottom-3">
           <div className={cn("rounded-2xl border-2 border-ink p-4", voted === post.answer ? "bg-lime" : "bg-white")}>
             <p className="font-mono font-extrabold">
               {voted === post.answer ? "Bạn chọn đúng!" : voted ? `Nên chọn “${answerLabel}”` : `Đáp án: “${answerLabel}”`}
@@ -242,7 +239,7 @@ export function VoteApp() {
             <p className="mb-2 font-mono text-xs font-bold">CẢ LỚP CHỌN ({counts.total} phiếu)</p>
             <VoteBars counts={counts.counts} total={counts.total} answer={post.answer} />
           </div>
-        </motion.div>
+        </div>
       )}
     </Frame>
   );

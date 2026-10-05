@@ -1,15 +1,22 @@
 "use client";
 
-import confetti from "canvas-confetti";
+import type confettiFn from "canvas-confetti";
+import type { Options } from "canvas-confetti";
 
 // Pháo giấy theo màu nhận diện. Tự tắt khi người dùng bật "giảm chuyển động".
+// Thư viện chỉ được tải ở lần bắn đầu tiên, không nằm trong lượt tải trang.
 const COLORS = ["#E5FD54", "#1E1A1B", "#FFFFFF"];
+const base: Options = { colors: COLORS, disableForReducedMotion: true, zIndex: 70 };
 
-const base = { colors: COLORS, disableForReducedMotion: true, zIndex: 70 } as const;
+let lib: Promise<typeof confettiFn> | null = null;
+const fire = async (opts: Options) => {
+  lib ??= import("canvas-confetti").then((m) => m.default);
+  (await lib)({ ...base, ...opts });
+};
 
 /** Bắn một cụm từ một điểm trên màn hình (toạ độ 0..1). */
 export function burst(x = 0.5, y = 0.6, scale = 1) {
-  confetti({ ...base, particleCount: Math.round(90 * scale), spread: 75, startVelocity: 42, origin: { x, y }, scalar: 0.9 });
+  void fire({ particleCount: Math.round(90 * scale), spread: 75, startVelocity: 42, origin: { x, y }, scalar: 0.9 });
 }
 
 /** Bắn từ phần tử vừa được bấm / vừa hoàn thành. */
@@ -23,8 +30,8 @@ export function burstFrom(el: Element | null, scale = 1) {
 export function celebrateBig() {
   const end = Date.now() + 900;
   const frame = () => {
-    confetti({ ...base, particleCount: 6, angle: 60, spread: 60, origin: { x: 0, y: 0.75 }, startVelocity: 55 });
-    confetti({ ...base, particleCount: 6, angle: 120, spread: 60, origin: { x: 1, y: 0.75 }, startVelocity: 55 });
+    void fire({ particleCount: 6, angle: 60, spread: 60, origin: { x: 0, y: 0.75 }, startVelocity: 55 });
+    void fire({ particleCount: 6, angle: 120, spread: 60, origin: { x: 1, y: 0.75 }, startVelocity: 55 });
     if (Date.now() < end) requestAnimationFrame(frame);
   };
   frame();
