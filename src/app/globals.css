@@ -1,0 +1,114 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+/* Bảng màu đồng bộ với slide của nhóm: xám #EDEDED, đen #1E1A1B, vàng chanh #E5FD54.
+   "alarm" chỉ dùng cho lớp ồn và dấu hiệu thao túng. */
+:root {
+  --paper: #ededed;
+  --ink: #1e1a1b;
+  --lime: #e5fd54;
+  --alarm: #ff2d2d;
+  --good: #1f8a4c;
+  --muted-ink: #5f595b;
+  --lr: 150px;
+
+  --background: var(--paper);
+  --foreground: var(--ink);
+  --card: #ffffff;
+  --card-foreground: var(--ink);
+  --popover: #ffffff;
+  --popover-foreground: var(--ink);
+  --primary: var(--ink);
+  --primary-foreground: var(--lime);
+  --secondary: #ffffff;
+  --secondary-foreground: var(--ink);
+  --muted: #e2e1e1;
+  --muted-foreground: var(--muted-ink);
+  --accent: var(--lime);
+  --accent-foreground: var(--ink);
+  --destructive: var(--alarm);
+  --border: var(--ink);
+  --input: var(--ink);
+  --ring: var(--ink);
+  --radius: 0.875rem;
+}
+
+@media (max-width: 640px) {
+  :root { --lr: 112px; }
+}
+
+/* Chế độ "Soi toàn trang": kính phủ hết, lớp sự thật hiện toàn bộ. */
+:root[data-lens-full="true"] { --lr: 400vmax; }
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  --color-paper: var(--paper);
+  --color-ink: var(--ink);
+  --color-lime: var(--lime);
+  --color-alarm: var(--alarm);
+  --color-good: var(--good);
+  --color-muted-ink: var(--muted-ink);
+
+  --font-sans: var(--font-body);
+  --font-mono: var(--font-jet);
+  --font-display: var(--font-shout);
+  --font-heading: var(--font-jet);
+
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+
+  --animate-marquee: marquee var(--marquee-duration, 30s) linear infinite;
+  --animate-jitter: jitter 0.35s steps(2) infinite;
+}
+
+@keyframes marquee {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@keyframes jitter {
+  0% { transform: translate(0, 0); }
+  50% { transform: translate(1.5px, -1px); }
+  100% { transform: translate(-1px, 1px); }
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { scroll-behavior: smooth; scroll-padding-top: 72px; }
+  body {
+    @apply bg-background text-foreground font-sans antialiased;
+    overflow-x: hidden;
+  }
+  ::selection { background: var(--lime); color: var(--ink); }
+}
+
+.lens-truth {
+  clip-path: circle(var(--lr) at var(--lx, -9999px) var(--ly, -9999px));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  .animate-marquee, .animate-jitter { animation: none !important; }
+}
