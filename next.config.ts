@@ -8,6 +8,8 @@ const nextConfig: NextConfig = {
   basePath,
   trailingSlash: true,
   images: { unoptimized: true },
+  // Ẩn nút "N" của Next dev tools ở góc màn hình khi chạy dev (để demo cho gọn).
+  devIndicators: false,
 };
 
 export default nextConfig;
