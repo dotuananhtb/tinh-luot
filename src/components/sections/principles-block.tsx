@@ -123,7 +123,7 @@ export function PrinciplesBlock() {
         <span className="rounded bg-ink px-2 py-1 text-lime">4 nguyên tắc</span>
         <span className="h-0.5 flex-1 bg-ink/15" />
       </div>
-      <h3 className="mb-2 font-mono text-[clamp(1.4rem,4vw,2rem)] leading-tight font-extrabold text-balance">
+      <h3 data-reveal="words" className="mb-2 font-mono text-[clamp(1.4rem,4vw,2rem)] leading-tight font-extrabold text-balance">
         Bốn ngộ nhận. Bốn nguyên tắc nằm bên dưới.
       </h3>
       <p className="mb-6 max-w-[60ch] text-muted-ink">

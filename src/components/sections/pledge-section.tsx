@@ -13,6 +13,8 @@ import { NoiseMarquee } from "@/components/shared/noise-marquee";
 import { drawCertificate, certificateFileName } from "@/lib/certificate";
 import { submitPledge, usePledgeWall, type PledgeResult } from "@/lib/pledges";
 import { useDisplayName } from "@/lib/firebase";
+import { CountUp } from "@/components/fx/count-up";
+import { celebrateBig } from "@/lib/celebrate";
 
 export function PledgeSection({
   offs,
@@ -47,7 +49,9 @@ export function PledgeSection({
     const clean = name.trim().replace(/\s+/g, " ");
     if (!clean || sending) return;
     setSending(true);
-    setResult(await submitPledge(clean, played ? score : null));
+    const res = await submitPledge(clean, played ? score : null);
+    setResult(res);
+    if (res !== "already") celebrateBig();
     setSending(false);
     setMe(clean);
     setTyped("");
@@ -162,10 +166,10 @@ export function PledgeSection({
 
             <div className="mt-8 flex flex-wrap items-baseline gap-3 font-mono font-bold">
               Đã có
-              <span className="border-2 border-ink bg-lime px-2 text-4xl tabular-nums">{wall.length}</span>
+              <span className="border-2 border-ink bg-lime px-2 text-4xl tabular-nums"><CountUp value={wall.length} /></span>
               sinh viên cam kết
             </div>
-            <div className="mt-4 flex max-h-56 flex-wrap gap-1.5 overflow-y-auto">
+            <div data-lenis-prevent className="mt-4 flex max-h-56 flex-wrap gap-1.5 overflow-y-auto">
               {wall.length === 0 && <p className="text-sm text-muted-ink">Hãy là người đầu tiên ký cam kết.</p>}
               {wall.slice(0, 120).map((w) => (
                 <span

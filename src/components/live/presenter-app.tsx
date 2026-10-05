@@ -15,6 +15,8 @@ import { SignOutButton } from "@/components/editor-gate";
 import { PostBody } from "@/components/sections/feed-section";
 import { QrCode, useSiteUrl } from "./qr-code";
 import { VoteBars } from "./vote-bars";
+import { CountUp } from "@/components/fx/count-up";
+import { celebrateBig } from "@/lib/celebrate";
 
 const SCREENS: { key: LiveState["screen"]; label: string; hint: string }[] = [
   { key: "idle", label: "Chờ", hint: "1" },
@@ -38,6 +40,10 @@ function VoteScreen({ state }: { state: LiveState }) {
   const { posts } = useContent();
   const post = posts[state.post];
   const { counts, total } = useVoteCounts(state.session, state.post);
+  // Khoảnh khắc lật đáp án trên máy chiếu.
+  useEffect(() => {
+    if (state.reveal) celebrateBig();
+  }, [state.reveal, state.post]);
   const voteUrl = useSiteUrl("/bo-phieu/");
   const answerLabel = REACTIONS.find((r) => r.key === post.answer)?.label;
 
@@ -56,7 +62,7 @@ function VoteScreen({ state }: { state: LiveState }) {
         <div className="flex items-baseline justify-between">
           <p className="font-mono text-2xl font-extrabold">CẢ LỚP PHẢN ỨNG</p>
           <p className="flex items-center gap-2 font-mono text-2xl font-bold tabular-nums">
-            <Users className="size-6" /> {total}
+            <Users className="size-6" /> <CountUp value={total} />
           </p>
         </div>
         <VoteBars counts={counts} total={total} answer={state.reveal ? post.answer : null} big />
@@ -98,7 +104,7 @@ function PledgeScreen() {
             animate={{ scale: 1 }}
             className="border-4 border-ink bg-lime px-4 font-mono text-[clamp(4rem,10vw,8rem)] leading-none font-extrabold tabular-nums"
           >
-            {entries.length}
+            <CountUp value={entries.length} />
           </motion.span>
           <span className="font-mono text-3xl font-bold">sinh viên cam kết</span>
         </div>

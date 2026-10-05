@@ -1,6 +1,6 @@
 "use client";
 
-import { Fragment } from "react";
+import { Fragment, useEffect, useRef } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, Flag, Play, RotateCcw, SearchCheck, Share2, SkipForward, ThumbsUp, X, ArrowDown } from "lucide-react";
 import { MAX_SCORE, REACTIONS, verdict, type Post, type Reaction } from "@/lib/content";
@@ -9,6 +9,8 @@ import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { TwoLayer } from "@/components/lens/two-layer";
 import { SectionHeading } from "@/components/shared/section-heading";
+import { CountUp } from "@/components/fx/count-up";
+import { burstFrom } from "@/lib/celebrate";
 
 export const REACTION_ICON: Record<Reaction, React.ComponentType<{ className?: string }>> = {
   like: ThumbsUp,
@@ -241,6 +243,14 @@ export function FeedSection({
   const done = answers.filter(Boolean).length;
   const POSTS = useContent().posts;
   const finished = done === POSTS.length;
+  const resultRef = useRef<HTMLDivElement>(null);
+  // Ăn mừng khi vừa lướt xong với kết quả "Người lướt tỉnh táo".
+  useEffect(() => {
+    if (finished && score >= 70) {
+      const t = setTimeout(() => burstFrom(resultRef.current, 1.2), 350);
+      return () => clearTimeout(t);
+    }
+  }, [finished, score]);
   const v = verdict(score);
 
   return (
@@ -268,7 +278,7 @@ export function FeedSection({
               <div className="flex shrink-0 items-baseline gap-2 lg:block">
                 <p className="font-mono text-xs font-bold tracking-widest text-lime">ĐỘ TỈNH TÁO</p>
                 <p className="font-mono text-xl font-extrabold tabular-nums lg:mt-1 lg:text-4xl">
-                  {score}
+                  <CountUp value={score} />
                   <span className="text-sm text-paper/60 lg:text-lg">/{MAX_SCORE}</span>
                 </p>
               </div>
@@ -301,12 +311,13 @@ export function FeedSection({
               initial={{ opacity: 0, y: 24, scale: 0.97 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
               transition={{ type: "spring", stiffness: 260, damping: 24 }}
+              ref={resultRef}
               className="mx-auto mt-12 max-w-xl rounded-2xl border-2 border-ink bg-white p-7 text-center shadow-[8px_8px_0_var(--ink)]"
               aria-live="polite"
             >
               <p className="font-mono text-xs font-bold tracking-widest">KẾT QUẢ</p>
               <p className="font-mono text-6xl font-extrabold tabular-nums">
-                {score}
+                <CountUp value={score} />
                 <span className="text-2xl">/{MAX_SCORE}</span>
               </p>
               <p

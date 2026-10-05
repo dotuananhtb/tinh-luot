@@ -36,15 +36,24 @@ export function LensProvider({ children }: { children: React.ReactNode }) {
   const layers = useRef(new Set<HTMLElement>());
   const inView = useRef(new Set<Element>());
   const pos = useRef({ x: -9999, y: -9999 });
+  // Chuột đặt "đích"; kính đuổi theo đích với quán tính (lerp mỗi khung hình) cho cảm giác vật lý.
+  const target = useRef({ x: -9999, y: -9999 });
+  const ease = useRef(0.2);
   const lensRef = useRef<HTMLDivElement | null>(null);
   const frame = useRef(0);
   const [full, setFull] = useState(false);
   const [visible, setVisible] = useState(false);
   const coarse = useSyncExternalStore(subscribeCoarse, () => window.matchMedia(COARSE).matches, () => false);
 
-  const paint = useCallback(() => {
+  // Hàm có tên riêng (step) để tự xếp lịch khung hình kế tiếp khi kính còn đang trượt tới đích.
+  const paint = useCallback(function step() {
     frame.current = 0;
-    const { x, y } = pos.current;
+    const p = pos.current;
+    const t = target.current;
+    p.x += (t.x - p.x) * ease.current;
+    p.y += (t.y - p.y) * ease.current;
+    if (Math.abs(t.x - p.x) > 0.3 || Math.abs(t.y - p.y) > 0.3) frame.current = requestAnimationFrame(step);
+    const { x, y } = p;
     if (lensRef.current) lensRef.current.style.transform = `translate3d(${x}px, ${y}px, 0)`;
     for (const el of layers.current) {
       if (!inView.current.has(el)) continue;
@@ -76,12 +85,14 @@ export function LensProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     // Vị trí khởi đầu: giữa màn hình, hơi lệch lên trên.
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) ease.current = 1;
     pos.current = { x: window.innerWidth / 2, y: window.innerHeight * 0.46 };
+    target.current = { ...pos.current };
     schedule();
 
     const onMove = (e: PointerEvent) => {
       if (e.pointerType !== "mouse") return;
-      pos.current = { x: e.clientX, y: e.clientY };
+      target.current = { x: e.clientX, y: e.clientY };
       schedule();
     };
     window.addEventListener("pointermove", onMove, { passive: true });
@@ -98,24 +109,24 @@ export function LensProvider({ children }: { children: React.ReactNode }) {
   const startDrag = useCallback(
     (e: React.PointerEvent) => {
       e.preventDefault();
-      const target = e.currentTarget as HTMLElement;
-      target.setPointerCapture(e.pointerId);
+      const handle = e.currentTarget as HTMLElement;
+      handle.setPointerCapture(e.pointerId);
       const offset = { x: pos.current.x - e.clientX, y: pos.current.y - e.clientY };
       const move = (ev: PointerEvent) => {
-        pos.current = {
+        target.current = pos.current = {
           x: Math.min(window.innerWidth - 24, Math.max(24, ev.clientX + offset.x)),
           y: Math.min(window.innerHeight - 24, Math.max(60, ev.clientY + offset.y)),
         };
         schedule();
       };
       const up = () => {
-        target.removeEventListener("pointermove", move);
-        target.removeEventListener("pointerup", up);
-        target.removeEventListener("pointercancel", up);
+        handle.removeEventListener("pointermove", move);
+        handle.removeEventListener("pointerup", up);
+        handle.removeEventListener("pointercancel", up);
       };
-      target.addEventListener("pointermove", move);
-      target.addEventListener("pointerup", up);
-      target.addEventListener("pointercancel", up);
+      handle.addEventListener("pointermove", move);
+      handle.addEventListener("pointerup", up);
+      handle.addEventListener("pointercancel", up);
     },
     [schedule],
   );

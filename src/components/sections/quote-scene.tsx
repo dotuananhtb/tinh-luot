@@ -59,7 +59,7 @@ export function QuoteScene() {
 
         <div className="mt-12 grid gap-8 md:grid-cols-[1.1fr_1fr] md:items-start">
           <div>
-            <h2 className="font-mono text-[clamp(1.6rem,4.5vw,2.4rem)] leading-tight font-extrabold text-balance">
+            <h2 data-reveal="words" className="font-mono text-[clamp(1.6rem,4.5vw,2.4rem)] leading-tight font-extrabold text-balance">
               Bạn vừa làm một thao tác <span className="bg-lime px-1 text-ink">triết học</span>.
             </h2>
             <p className="mt-4 leading-relaxed text-paper/85">

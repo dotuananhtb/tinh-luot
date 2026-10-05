@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { useContent } from "@/components/content-provider";
 import { PostBody, REACTION_ICON } from "@/components/sections/feed-section";
 import { VoteBars } from "./vote-bars";
+import { burst } from "@/lib/celebrate";
 
 const homeHref = (hash = "") => `${process.env.NEXT_PUBLIC_BASE_PATH ?? ""}/${hash}`;
 
@@ -111,6 +112,10 @@ export function VoteApp() {
   const display = useDisplayName();
   const [editingName, setEditingName] = useState(false);
   const [skippedName, setSkippedName] = useState(false);
+  const correctNow = !!state?.reveal && !!mine && mine.key === key && mine.reaction === posts[state.post]?.answer;
+  useEffect(() => {
+    if (correctNow) burst(0.5, 0.45, 1);
+  }, [correctNow]);
   const greeting: Greeting = { name: display.name, onEdit: () => setEditingName(true) };
 
   useEffect(() => {

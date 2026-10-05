@@ -1,12 +1,13 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimate } from "motion/react";
 import { Check, MoveDown } from "lucide-react";
 import { type Bin } from "@/lib/content";
 import { useContent } from "@/components/content-provider";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/shared/section-heading";
+import { burst } from "@/lib/celebrate";
 
 type Placed = Record<Bin, string[]>;
 
@@ -30,6 +31,9 @@ export function SortSection() {
   const binRefs = useRef<Partial<Record<Bin, HTMLButtonElement | null>>>({});
   const top = deck[0];
   const finished = deck.length === 0;
+  useEffect(() => {
+    if (finished) burst(0.5, 0.55, 1.1);
+  }, [finished]);
 
   const binAt = (x: number, y: number) =>
     BINS.find(({ key }) => {

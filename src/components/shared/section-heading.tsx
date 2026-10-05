@@ -20,7 +20,7 @@ export function SectionHeading({
         <span>{kicker}</span>
         <span className="h-0.5 flex-1 bg-ink/15" />
       </div>
-      <h2 className="font-mono text-[clamp(1.75rem,5.5vw,3rem)] leading-[1.08] font-extrabold tracking-tight text-balance">
+      <h2 data-reveal="words" className="font-mono text-[clamp(1.75rem,5.5vw,3rem)] leading-[1.08] font-extrabold tracking-tight text-balance">
         {title}
       </h2>
       {lead && <p className="mt-3 max-w-[60ch] text-muted-ink">{lead}</p>}

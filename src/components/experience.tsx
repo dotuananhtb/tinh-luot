@@ -13,6 +13,7 @@ import { FeedSection } from "@/components/sections/feed-section";
 import { SortSection } from "@/components/sections/sort-section";
 import { VietnamSection } from "@/components/sections/vietnam-section";
 import { PledgeSection } from "@/components/sections/pledge-section";
+import { MotionFx } from "@/components/fx/motion-fx";
 
 /** Giữ trạng thái xuyên suốt hành trình: điểm lướt thử (dùng cho chứng nhận) và mức ồn. */
 export function Experience() {
@@ -56,6 +57,7 @@ export function Experience() {
         />
       </main>
       <Lens />
+      <MotionFx />
     </LensProvider>
   );
 }
