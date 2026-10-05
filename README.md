@@ -17,6 +17,8 @@ Mỗi màn hình có **lớp ồn** (tiêu đề giật gân, đỏ, la hét) v�
 | 5. Việt Nam | Trang báo in: 5 đặc điểm, 5 chính sách, dòng thời gian |
 | 6. Cam kết | Tắt 5 công tắc thói quen, độ ồn của trang giảm dần; ký tên, nhận chứng nhận PNG |
 
+> **Thuyết trình:** đọc [hướng dẫn vận hành buổi thuyết trình](docs/huong-dan-van-hanh-thuyet-trinh.md) (phân vai, kịch bản từng phút, phím tắt, xử lý sự cố).
+
 ## Các trang
 
 | Route | Ai dùng | Việc |
