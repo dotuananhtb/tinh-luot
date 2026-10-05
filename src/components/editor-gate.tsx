@@ -2,9 +2,11 @@
 
 import { createContext, useContext, useState } from "react";
 import { GoogleAuthProvider, signInWithPopup, signOut, type User } from "firebase/auth";
-import { LogIn, LogOut, ShieldAlert } from "lucide-react";
-import { auth, emailKey, useDbValue, useUser } from "@/lib/firebase";
+import { set } from "firebase/database";
+import { KeyRound, LogIn, LogOut, ShieldAlert } from "lucide-react";
+import { auth, dbRef, emailKey, useDbValue, useUser } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 
 type Role = "owner" | "editor";
 type EditorCtx = { user: User; role: Role };
@@ -25,6 +27,57 @@ function Shell({ title, children }: { title: string; children: React.ReactNode }
         {children}
       </div>
     </main>
+  );
+}
+
+/**
+ * Tự tham gia bằng mã mời: ghi mã vào nhánh riêng của mình, rồi tự thêm email vào danh sách.
+ * Rules trên server so mã với mã bí mật (người thường không đọc được) nên đoán sai là bị từ chối.
+ */
+function InviteForm({ user }: { user: User }) {
+  const [code, setCode] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const clean = code.trim();
+    if (!clean || busy) return;
+    setBusy(true);
+    setError(null);
+    try {
+      await set(dbRef(`inviteAttempts/${user.uid}`), clean);
+      await set(dbRef(`editors/${emailKey(user.email!)}`), "editor");
+      window.location.reload(); // nghe lại quyền từ đầu
+    } catch {
+      setError("Mã không đúng hoặc đã bị tắt. Hỏi lại trưởng nhóm.");
+      setBusy(false);
+    }
+  };
+
+  return (
+    <form onSubmit={submit} className="mb-5 rounded-xl bg-paper p-4">
+      <label htmlFor="invite-code" className="mb-1.5 flex items-center gap-1.5 text-sm font-bold">
+        <KeyRound className="size-4" /> Có mã mời từ trưởng nhóm?
+      </label>
+      <div className="flex flex-wrap gap-2">
+        <Input
+          id="invite-code"
+          value={code}
+          onChange={(e) => setCode(e.target.value)}
+          autoComplete="off"
+          autoCapitalize="characters"
+          spellCheck={false}
+          maxLength={40}
+          placeholder="Nhập mã mời"
+          className="h-11 min-w-0 flex-[1_1_160px] rounded-full border-2 bg-white px-4 font-mono text-base tracking-widest"
+        />
+        <Button type="submit" disabled={!code.trim() || busy}>
+          {busy ? "Đang kiểm tra…" : "Vào nhóm"}
+        </Button>
+      </div>
+      {error && <p className="mt-2 text-sm font-semibold text-alarm" role="alert">{error}</p>}
+    </form>
   );
 }
 
@@ -75,9 +128,10 @@ export function EditorGate({ title, children }: { title: string; children: React
         <p className="mb-2 flex items-center gap-2 font-semibold">
           <ShieldAlert className="size-5 text-alarm" /> Tài khoản chưa có quyền
         </p>
-        <p className="mb-5 text-sm text-muted-ink">
-          Gửi email <b className="text-ink">{user.email}</b> cho trưởng nhóm để được thêm vào danh sách biên tập viên, rồi tải lại trang.
+        <p className="mb-4 text-sm text-muted-ink">
+          Nhập mã mời, hoặc gửi email <b className="text-ink">{user.email}</b> cho trưởng nhóm để được thêm vào danh sách.
         </p>
+        <InviteForm user={user} />
         <Button variant="outline" onClick={() => signOut(auth())}>
           <LogOut /> Đăng xuất
         </Button>

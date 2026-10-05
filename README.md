@@ -26,7 +26,7 @@ Mỗi màn hình có **lớp ồn** (tiêu đề giật gân, đỏ, la hét) v�
 | `/trinh-chieu` | thành viên nhóm | máy chiếu: QR, biểu đồ phiếu realtime, lật đáp án, bộ đếm + kiểm duyệt tên. Phím: ← → đổi bài · Space lật · 1/2/3 đổi màn · F toàn màn hình |
 | `/quan-tri` | thành viên nhóm | sửa toàn bộ nội dung, lịch sử + khôi phục; owner thêm thành viên |
 
-Thành viên đăng nhập Google; owner thêm email ở `/quan-tri` → mục **Thành viên**.
+Thành viên đăng nhập Google rồi nhập **mã mời** do owner tạo ở `/quan-tri` → mục **Thành viên** (owner cũng có thể thêm email trực tiếp).
 
 ## Dữ liệu (Firebase Realtime Database)
 

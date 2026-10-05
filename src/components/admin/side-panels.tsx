@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { remove, set } from "firebase/database";
-import { History, Trash2, UserPlus } from "lucide-react";
+import { Copy, History, KeyRound, RefreshCw, Trash2, UserPlus, XCircle } from "lucide-react";
 import type { SiteContent } from "@/lib/content";
 import { dbRef, emailKey, useDbValue } from "@/lib/firebase";
 import { Button } from "@/components/ui/button";
@@ -42,6 +42,62 @@ export function HistoryPanel({ onRestore }: { onRestore: (c: SiteContent, label:
   );
 }
 
+// Bỏ các ký tự dễ nhầm (0/O, 1/I/L) để đọc mã cho nhau không sai.
+const CODE_ALPHABET = "ABCDEFGHJKMNPQRSTUVWXYZ23456789";
+function randomCode(len = 8) {
+  const bytes = crypto.getRandomValues(new Uint32Array(len));
+  return Array.from(bytes, (b) => CODE_ALPHABET[b % CODE_ALPHABET.length]).join("");
+}
+
+/** Mã mời: ai đăng nhập Google và nhập đúng mã sẽ tự thành biên tập viên. Chỉ owner xem/đổi được. */
+function InviteCodeCard() {
+  const secret = useDbValue<{ inviteCode?: string }>("secret");
+  const code = secret.data?.inviteCode ?? null;
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    if (!code) return;
+    try {
+      await navigator.clipboard.writeText(code);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1500);
+    } catch {
+      // trình duyệt chặn clipboard: người dùng tự bôi đen mã
+    }
+  };
+
+  return (
+    <div className="rounded-xl border-2 border-ink bg-white p-4">
+      <p className="flex items-center gap-1.5 text-sm font-bold">
+        <KeyRound className="size-4" /> Mã mời
+      </p>
+      <p className="mt-1 text-xs text-muted-ink">
+        Gửi mã cho thành viên: họ vào trang này, đăng nhập Google rồi nhập mã. Tạo mã mới thì mã cũ hết hiệu lực (người đã vào vẫn giữ quyền).
+      </p>
+      <div className="mt-3 flex flex-wrap items-center gap-2">
+        {code ? (
+          <code className="rounded-lg bg-lime px-3 py-2 font-mono text-xl font-extrabold tracking-[0.25em] select-all">{code}</code>
+        ) : (
+          <span className="text-sm font-semibold text-muted-ink">Đang tắt: không ai tự vào được.</span>
+        )}
+        {code && (
+          <Button size="sm" variant="outline" onClick={copy}>
+            <Copy /> {copied ? "Đã chép" : "Sao chép"}
+          </Button>
+        )}
+        <Button size="sm" onClick={() => set(dbRef("secret/inviteCode"), randomCode())}>
+          <RefreshCw /> {code ? "Tạo mã mới" : "Tạo mã"}
+        </Button>
+        {code && (
+          <Button size="sm" variant="ghost" onClick={() => remove(dbRef("secret/inviteCode"))}>
+            <XCircle /> Tắt mã
+          </Button>
+        )}
+      </div>
+    </div>
+  );
+}
+
 /** Owner thêm/xóa biên tập viên. Email lưu dưới dạng khóa (dấu chấm → dấu phẩy). */
 export function EditorsPanel({ selfEmail }: { selfEmail: string }) {
   const eds = useDbValue<Record<string, "owner" | "editor">>("editors");
@@ -65,6 +121,7 @@ export function EditorsPanel({ selfEmail }: { selfEmail: string }) {
 
   return (
     <div className="space-y-4">
+      <InviteCodeCard />
       <form onSubmit={add} className="flex flex-wrap gap-2">
         <Input
           type="email"
