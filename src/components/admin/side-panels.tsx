@@ -105,6 +105,13 @@ export function EditorsPanel({ selfEmail }: { selfEmail: string }) {
   const [msg, setMsg] = useState<string | null>(null);
   const self = emailKey(selfEmail);
 
+  // Xóa thành viên = thu hồi: rules cấm email này tự vào lại bằng mã mời (kể cả khi chưa đổi mã).
+  const revoke = async (k: string) => {
+    await set(dbRef(`revoked/${k}`), true);
+    await remove(dbRef(`editors/${k}`));
+    setMsg(`Đã thu hồi quyền của ${k.replaceAll(",", ".")}. Người này không tự vào lại bằng mã mời được.`);
+  };
+
   const add = async (e: React.FormEvent) => {
     e.preventDefault();
     const clean = email.trim().toLowerCase();
@@ -112,6 +119,7 @@ export function EditorsPanel({ selfEmail }: { selfEmail: string }) {
     if (/[#$[\]/]/.test(clean)) return setMsg("Email có ký tự không hỗ trợ.");
     try {
       await set(dbRef(`editors/${emailKey(clean)}`), "editor");
+      await remove(dbRef(`revoked/${emailKey(clean)}`)); // thêm lại thủ công = bỏ thu hồi
       setEmail("");
       setMsg(`Đã thêm ${clean}. Người đó đăng nhập Google bằng email này là vào được.`);
     } catch {
@@ -144,7 +152,7 @@ export function EditorsPanel({ selfEmail }: { selfEmail: string }) {
               {role === "owner" ? "OWNER" : "biên tập"}
             </span>
             {k !== self && role !== "owner" && (
-              <Button size="icon" variant="ghost" aria-label={`Xóa ${k.replaceAll(",", ".")}`} onClick={() => remove(dbRef(`editors/${k}`))}>
+              <Button size="icon" variant="ghost" aria-label={`Xóa ${k.replaceAll(",", ".")}`} onClick={() => revoke(k)}>
                 <Trash2 />
               </Button>
             )}

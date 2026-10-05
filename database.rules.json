@@ -17,7 +17,7 @@
     "editors": {
       ".read": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
       "$key": {
-        ".write": "(auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).val() === 'owner') || (auth != null && auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ',') && !data.exists() && newData.val() === 'editor' && root.child('secret/inviteCode').exists() && root.child('inviteAttempts').child(auth.uid).val() === root.child('secret/inviteCode').val())",
+        ".write": "(auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).val() === 'owner') || (auth != null && auth.token.email_verified === true && $key === auth.token.email.toLowerCase().replace('.', ',') && !data.exists() && newData.val() === 'editor' && !root.child('revoked').child($key).exists() && root.child('secret/inviteCode').exists() && root.child('inviteAttempts').child(auth.uid).val() === root.child('secret/inviteCode').val())",
         ".validate": "newData.isString() && (newData.val() === 'editor' || newData.val() === 'owner')"
       }
     },
@@ -93,6 +93,13 @@
         ".read": "auth != null && auth.uid === $uid",
         ".write": "auth != null && auth.uid === $uid",
         ".validate": "newData.isString() && newData.val().length <= 40"
+      }
+    },
+    "revoked": {
+      ".read": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).val() === 'owner'",
+      "$key": {
+        ".write": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).val() === 'owner'",
+        ".validate": "newData.val() === true"
       }
     }
   }
