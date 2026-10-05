@@ -1,7 +1,8 @@
 "use client";
 
 import { useState } from "react";
-import { PLEDGES, POSTS, type Reaction } from "@/lib/content";
+import { PLEDGES, type Reaction } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { LensProvider } from "@/components/lens/lens-provider";
 import { Lens } from "@/components/lens/lens";
 import { ProgressBar } from "@/components/shared/progress-bar";
@@ -15,6 +16,7 @@ import { PledgeSection } from "@/components/sections/pledge-section";
 
 /** Giữ trạng thái xuyên suốt hành trình: điểm lướt thử (dùng cho chứng nhận) và mức ồn. */
 export function Experience() {
+  const POSTS = useContent().posts;
   const [answers, setAnswers] = useState<(Reaction | null)[]>(() => POSTS.map(() => null));
   const [offs, setOffs] = useState<boolean[]>(() => PLEDGES.map(() => false));
 

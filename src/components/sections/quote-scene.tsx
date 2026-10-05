@@ -1,11 +1,12 @@
 "use client";
 
 import { Share2 } from "lucide-react";
-import { MARX_QUOTE } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { TwoLayer } from "@/components/lens/two-layer";
 
 /** Một câu bị cắt khỏi ngữ cảnh (hiện tượng) và đoạn đầy đủ (bản chất). Gọi tên phạm trù ngay sau đó. */
 export function QuoteScene() {
+  const MARX_QUOTE = useContent().marx;
   return (
     <div id="cau-noi" className="border-t-2 border-ink bg-ink py-20 text-paper">
       <div className="mx-auto max-w-4xl px-4">

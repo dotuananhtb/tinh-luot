@@ -1,11 +1,14 @@
+"use client";
+
 import { Church, Globe2, HandHeart, Landmark, Users } from "lucide-react";
-import { POLICIES, TIMELINE, TRAITS } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { SectionHeading } from "@/components/shared/section-heading";
 
 const TRAIT_ICONS = [Church, HandHeart, Users, Landmark, Globe2];
 
 /** Sau bảng tin ồn ào là một trang báo in: chậm, có nguồn, có cột. */
 export function VietnamSection() {
+  const { traits: TRAITS, policies: POLICIES, timeline: TIMELINE } = useContent();
   return (
     <section id="viet-nam" className="border-t-2 border-ink py-20">
       <div className="mx-auto max-w-5xl px-4">

@@ -1,14 +1,15 @@
 "use client";
 
 import { ArrowDown, ScanEye } from "lucide-react";
-import { SLOGAN } from "@/lib/content";
 import { buttonVariants } from "@/components/ui/button";
 import { TwoLayer } from "@/components/lens/two-layer";
 import { useLens } from "@/components/lens/lens-provider";
 import { NoiseMarquee } from "@/components/shared/noise-marquee";
+import { useContent } from "@/components/content-provider";
 
 export function HeroSection() {
   const { coarse, setFull } = useLens();
+  const { hero, slogan } = useContent();
 
   return (
     <section id="mo-dau" className="relative">
@@ -20,10 +21,10 @@ export function HeroSection() {
             <div className="absolute inset-0 grid place-items-center px-4">
               <div className="-rotate-3 animate-jitter rounded-lg border-4 border-ink bg-alarm px-5 py-4 text-center text-white shadow-[8px_8px_0_var(--ink)]">
                 <p className="font-display text-[clamp(2rem,8vw,5rem)] leading-none uppercase">
-                  Tôn giáo do thần linh tạo ra?!!
+                  {hero.sticker}
                 </p>
                 <p className="mt-2 font-display text-[clamp(1rem,3vw,1.6rem)] tracking-wide text-lime uppercase">
-                  Xem ngay kẻo bị xóa
+                  {hero.stickerSub}
                 </p>
               </div>
             </div>
@@ -36,12 +37,12 @@ export function HeroSection() {
                 TỈNH LƯỚT
               </p>
               <h1 className="font-mono text-[clamp(1.9rem,6.4vw,4rem)] leading-[1.08] font-extrabold tracking-tight text-balance">
-                Tôn giáo từ đâu mà có – do thần linh hay do con người tạo ra?
+                {hero.question}
               </h1>
               <p className="mx-auto mt-6 max-w-xl text-lg">
-                Mỗi ngày bạn lướt qua bao nhiêu nội dung về tôn giáo? Bạn có chắc mình đã phản ứng đúng?
+                {hero.sub}
               </p>
-              <p className="mt-6 font-mono text-sm font-bold">{SLOGAN}</p>
+              <p className="mt-6 font-mono text-sm font-bold">{slogan}</p>
             </div>
           </div>
         }

@@ -279,3 +279,51 @@ export const PLEDGES = [
   { on: "Kỳ thị", off: "Không kỳ thị" },
   { on: "Tiếp tay cho tin sai lệch", off: "Không tiếp tay cho thông tin sai lệch" },
 ];
+
+/** Chữ của màn mở đầu. */
+export const HERO = {
+  question: "Tôn giáo từ đâu mà có – do thần linh hay do con người tạo ra?",
+  sub: "Mỗi ngày bạn lướt qua bao nhiêu nội dung về tôn giáo? Bạn có chắc mình đã phản ứng đúng?",
+  sticker: "Tôn giáo do thần linh tạo ra?!!",
+  stickerSub: "Xem ngay kẻo bị xóa",
+};
+
+/* ------------------------------------------------------------------
+ * Nội dung chỉnh được qua /quan-tri. Bản trên Firebase ghi đè lên DEFAULT_CONTENT
+ * nhưng chỉ khi đúng kiểu và đúng số lượng mục (bố cục, luật chấm điểm phụ thuộc số lượng).
+ * ------------------------------------------------------------------ */
+export const DEFAULT_CONTENT = {
+  slogan: SLOGAN,
+  blooketUrl: BLOOKET_URL,
+  hero: HERO,
+  noise: NOISE_HEADLINES,
+  marx: MARX_QUOTE,
+  flips: FLIPS,
+  principles: PRINCIPLES,
+  faces: FACES,
+  faceCases: FACE_CASES,
+  posts: POSTS,
+  bins: BINS,
+  chips: CHIPS,
+  traits: TRAITS,
+  policies: POLICIES,
+  timeline: TIMELINE,
+  pledges: PLEDGES,
+};
+
+export type SiteContent = typeof DEFAULT_CONTENT;
+
+/** Gộp `remote` lên `base` theo đúng hình dạng của `base`; giá trị sai kiểu bị bỏ qua. */
+export function mergeContent<T>(base: T, remote: unknown): T {
+  if (Array.isArray(base)) {
+    if (!Array.isArray(remote) || remote.length !== base.length) return base;
+    return base.map((b, i) => mergeContent(b, remote[i])) as T;
+  }
+  if (base && typeof base === "object") {
+    if (!remote || typeof remote !== "object" || Array.isArray(remote)) return base;
+    const out: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(base)) out[k] = mergeContent(v, (remote as Record<string, unknown>)[k]);
+    return out as T;
+  }
+  return typeof remote === typeof base ? (remote as T) : base;
+}

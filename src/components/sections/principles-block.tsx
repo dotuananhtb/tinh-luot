@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, X } from "lucide-react";
-import { FACE_CASES, FACES, PRINCIPLES, type Face } from "@/lib/content";
+import { type Face } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { cn } from "@/lib/utils";
 import { TwoLayer } from "@/components/lens/two-layer";
 
 /** 4 nguyên tắc: ngộ nhận (hiện tượng) đè lên nguyên tắc (bản chất). */
 function PrincipleCards() {
+  const PRINCIPLES = useContent().principles;
   return (
     <div className="grid gap-4 md:grid-cols-2">
       {PRINCIPLES.map((p, i) => (
@@ -37,6 +39,7 @@ function PrincipleCards() {
 
 /** Trò chơi phân biệt hai mặt: chọn tình huống thuộc mặt tư tưởng hay mặt chính trị. */
 function TwoFacesGame() {
+  const { faces: FACES, faceCases: FACE_CASES } = useContent();
   const [picks, setPicks] = useState<(Face | null)[]>(() => FACE_CASES.map(() => null));
   const done = picks.filter(Boolean).length;
   const right = picks.filter((p, i) => p === FACE_CASES[i].face).length;

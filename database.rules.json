@@ -2,21 +2,60 @@
   "rules": {
     ".read": false,
     ".write": false,
+    "content": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      ".validate": "newData.hasChildren()"
+    },
+    "contentHistory": {
+      ".read": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      "$id": {
+        ".write": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).exists() && !data.exists() && newData.exists()",
+        ".validate": "newData.hasChildren(['content', 'by', 't']) && newData.child('t').val() === now && newData.child('by').val() === auth.token.email"
+      }
+    },
+    "editors": {
+      ".read": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      "$key": {
+        ".write": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).val() === 'owner'",
+        ".validate": "newData.isString() && (newData.val() === 'editor' || newData.val() === 'owner')"
+      }
+    },
+    "live": {
+      ".read": true,
+      ".write": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+      ".validate": "newData.hasChildren(['session', 'post', 'reveal', 'screen'])",
+      "session": {
+        ".validate": "newData.isString() && newData.val().matches(/^[a-z0-9-]{1,24}$/)"
+      },
+      "post": {
+        ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 7"
+      },
+      "reveal": {
+        ".validate": "newData.isBoolean()"
+      },
+      "screen": {
+        ".validate": "newData.isString() && newData.val().matches(/^(idle|vote|pledge)$/)"
+      },
+      "$other": {
+        ".validate": false
+      }
+    },
     "votes": {
       "$session": {
         ".read": "$session.matches(/^[a-z0-9-]{1,24}$/)",
         "$post": {
-          "$reaction": {
-            ".write": "newData.exists()",
-            ".validate": "$session.matches(/^[a-z0-9-]{1,24}$/) && $post.matches(/^p[1-8]$/) && $reaction.matches(/^(like|share|verify|report|skip)$/) && newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1"
+          "$uid": {
+            ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists()",
+            ".validate": "$session.matches(/^[a-z0-9-]{1,24}$/) && $post.matches(/^p[1-8]$/) && newData.isString() && newData.val().matches(/^(like|share|verify|report|skip)$/)"
           }
         }
       }
     },
     "pledges": {
       ".read": true,
-      "$id": {
-        ".write": "!data.exists()",
+      "$uid": {
+        ".write": "auth != null && auth.uid === $uid && !data.exists() && newData.exists()",
         ".validate": "newData.hasChildren(['name', 't'])",
         "name": {
           ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
@@ -30,6 +69,13 @@
         "$other": {
           ".validate": false
         }
+      }
+    },
+    "hidden": {
+      ".read": true,
+      "$uid": {
+        ".write": "auth != null && auth.token.email_verified === true && root.child('editors').child(auth.token.email.toLowerCase().replace('.', ',')).exists()",
+        ".validate": "!newData.exists() || newData.val() === true"
       }
     }
   }

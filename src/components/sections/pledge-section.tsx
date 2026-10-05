@@ -1,16 +1,17 @@
 "use client";
 
-import { useEffect, useRef, useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { BellOff, Download, ExternalLink } from "lucide-react";
-import { BLOOKET_URL, PLEDGES, SLOGAN } from "@/lib/content";
+import { PLEDGES } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { NoiseMarquee } from "@/components/shared/noise-marquee";
 import { drawCertificate, certificateFileName } from "@/lib/certificate";
-import { addToWall, getServerWall, getWall, subscribeWall } from "@/lib/pledge-wall";
+import { submitPledge, usePledgeWall, type PledgeResult } from "@/lib/pledges";
 
 export function PledgeSection({
   offs,
@@ -26,19 +27,24 @@ export function PledgeSection({
   const remaining = offs.filter((o) => !o).length;
   const allOff = remaining === 0;
   const [name, setName] = useState("");
-  const wall = useSyncExternalStore(subscribeWall, getWall, getServerWall);
+  const { slogan: SLOGAN, blooketUrl: BLOOKET_URL, pledges: PLEDGE_TEXT } = useContent();
+  const { entries: wall, live } = usePledgeWall();
   const [me, setMe] = useState<string | null>(null);
+  const [result, setResult] = useState<PledgeResult | null>(null);
+  const [sending, setSending] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   useEffect(() => {
-    if (me && canvasRef.current) drawCertificate(canvasRef.current, { name: me, score: played ? score : null });
-  }, [me, score, played]);
+    if (me && canvasRef.current) drawCertificate(canvasRef.current, { name: me, score: played ? score : null, slogan: SLOGAN });
+  }, [me, score, played, SLOGAN]);
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
     const clean = name.trim().replace(/\s+/g, " ");
-    if (!clean) return;
-    addToWall({ name: clean, score: played ? score : null, t: Date.now() });
+    if (!clean || sending) return;
+    setSending(true);
+    setResult(await submitPledge(clean, played ? score : null));
+    setSending(false);
     setMe(clean);
     setName("");
   };
@@ -81,7 +87,7 @@ export function PledgeSection({
               <span className="text-lime">{PLEDGES.length - remaining}/5 TẮT</span>
             </div>
             <ul>
-              {PLEDGES.map((p, i) => (
+              {PLEDGE_TEXT.map((p, i) => (
                 <li key={p.on} className="border-b border-ink/10 last:border-b-0">
                   <button
                     type="button"
@@ -143,7 +149,7 @@ export function PledgeSection({
                   autoComplete="name"
                   className="h-11 min-w-0 flex-[1_1_200px] rounded-full border-2 bg-white px-5 text-base"
                 />
-                <Button type="submit" disabled={!allOff || !name.trim()}>
+                <Button type="submit" disabled={!allOff || !name.trim() || sending}>
                   <BellOff /> Tôi cam kết
                 </Button>
               </div>
@@ -156,9 +162,9 @@ export function PledgeSection({
             </div>
             <div className="mt-4 flex max-h-56 flex-wrap gap-1.5 overflow-y-auto">
               {wall.length === 0 && <p className="text-sm text-muted-ink">Hãy là người đầu tiên ký cam kết.</p>}
-              {[...wall].reverse().map((w) => (
+              {wall.slice(0, 120).map((w) => (
                 <span
-                  key={w.t}
+                  key={w.id}
                   className={cn(
                     "rounded-full border px-3 py-1 text-sm",
                     w.name === me ? "border-ink bg-lime font-bold" : "border-ink/20 bg-white",
@@ -168,7 +174,13 @@ export function PledgeSection({
                 </span>
               ))}
             </div>
-            <p className="mt-3 text-xs text-muted-ink">Bức tường cam kết được lưu trên trình duyệt của thiết bị này.</p>
+            <p className="mt-3 flex items-center gap-2 text-xs text-muted-ink">
+              <span className={cn("size-2 rounded-full", live ? "animate-pulse bg-good" : "bg-muted-ink")} />
+              {live ? "Trực tiếp: cập nhật cùng lúc trên mọi thiết bị." : "Ngoại tuyến: bức tường đang lưu trên thiết bị này."}
+            </p>
+            {result === "already" && (
+              <p className="mt-2 text-sm font-semibold">Thiết bị này đã ký cam kết trước đó, chứng nhận vẫn được tạo cho bạn.</p>
+            )}
           </div>
         </div>
 

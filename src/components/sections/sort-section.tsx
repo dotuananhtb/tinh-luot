@@ -3,7 +3,8 @@
 import { useRef, useState } from "react";
 import { AnimatePresence, motion, useAnimate } from "motion/react";
 import { Check, MoveDown } from "lucide-react";
-import { BINS, CHIPS, type Bin } from "@/lib/content";
+import { type Bin } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/shared/section-heading";
 
@@ -17,8 +18,12 @@ function pointFromEvent(e: MouseEvent | TouchEvent | PointerEvent) {
 
 /** Chồng 9 thẻ: kéo thẻ trên cùng thả vào ô, hoặc bấm thẳng vào ô. Sai thì thẻ rung và quay lại. */
 export function SortSection() {
-  const [deck, setDeck] = useState(CHIPS);
-  const [placed, setPlaced] = useState<Placed>({ tn: [], tg: [], mt: [] });
+  const { bins: BINS, chips: CHIPS } = useContent();
+  // Chỉ lưu chỉ số thẻ đã đặt; chữ luôn lấy từ nội dung mới nhất (có thể đổi khi bản trên Firebase tải xong).
+  const [placedIdx, setPlacedIdx] = useState<number[]>([]);
+  const deck = CHIPS.map((c, i) => ({ ...c, i })).filter((c) => !placedIdx.includes(c.i));
+  const placed: Placed = { tn: [], tg: [], mt: [] };
+  placedIdx.forEach((i) => placed[CHIPS[i].bin].push(CHIPS[i].text));
   const [hover, setHover] = useState<Bin | null>(null);
   const [miss, setMiss] = useState<{ bin: Bin; n: number } | null>(null);
   const [scope, animate] = useAnimate();
@@ -35,8 +40,7 @@ export function SortSection() {
   const tryPlace = (bin: Bin) => {
     if (!top) return;
     if (top.bin === bin) {
-      setPlaced((p) => ({ ...p, [bin]: [...p[bin], top.text] }));
-      setDeck((d) => d.slice(1));
+      setPlacedIdx((p) => [...p, top.i]);
       setMiss(null);
       return;
     }
@@ -65,7 +69,7 @@ export function SortSection() {
                 const isTop = depth === 0;
                 return (
                   <motion.div
-                    key={c.text}
+                    key={`chip-${c.i}`}
                     ref={isTop ? scope : undefined}
                     drag={isTop}
                     dragSnapToOrigin
@@ -144,7 +148,7 @@ export function SortSection() {
             >
               <span className="flex items-center justify-between font-mono text-sm font-extrabold uppercase">
                 {b.label}
-                <span className="tabular-nums text-muted-ink">{placed[b.key].length}/3</span>
+                <span className="tabular-nums text-muted-ink">{placed[b.key].length}/{CHIPS.filter((c) => c.bin === b.key).length}</span>
               </span>
               <span className="mt-3 flex flex-wrap gap-1.5">
                 {placed[b.key].map((t) => (

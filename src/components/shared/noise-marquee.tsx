@@ -1,8 +1,11 @@
+"use client";
+
 import { cn } from "@/lib/utils";
-import { NOISE_HEADLINES } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 
 /** Các hàng tiêu đề giật gân chạy ngang, xen kẽ chiều. Thuần trang trí (aria-hidden ở nơi dùng). */
 export function NoiseMarquee({ rows = 7, className }: { rows?: number; className?: string }) {
+  const NOISE_HEADLINES = useContent().noise;
   return (
     <div className={cn("flex h-full flex-col justify-between overflow-hidden py-2 select-none", className)}>
       {Array.from({ length: rows }, (_, r) => {

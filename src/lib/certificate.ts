@@ -1,7 +1,7 @@
-import { MAX_SCORE, PLEDGES, SLOGAN, verdict } from "./content";
+import { MAX_SCORE, PLEDGES, verdict } from "./content";
 
 /** Vẽ thẻ chứng nhận khổ story 1080×1920 lên canvas. */
-export async function drawCertificate(canvas: HTMLCanvasElement, { name, score }: { name: string; score: number | null }) {
+export async function drawCertificate(canvas: HTMLCanvasElement, { name, score, slogan }: { name: string; score: number | null; slogan: string }) {
   try {
     await document.fonts.ready;
   } catch {}
@@ -74,15 +74,20 @@ export async function drawCertificate(canvas: HTMLCanvasElement, { name, score }
   ctx.fillRect(0, H - 200, W, 200);
   ctx.fillStyle = LIME;
   ctx.font = `800 40px ${MONO}`;
-  const [a, b] = SLOGAN.split(" – ");
-  ctx.fillText(`${a} –`, W / 2, H - 115);
-  ctx.fillText(b, W / 2, H - 60);
+  // Khẩu hiệu tách hai dòng tại dấu " – "; không có dấu đó thì in một dòng.
+  const [a, b] = slogan.split(" – ");
+  if (b) {
+    ctx.fillText(`${a} –`, W / 2, H - 115);
+    ctx.fillText(b, W / 2, H - 60);
+  } else {
+    ctx.fillText(a, W / 2, H - 88);
+  }
 }
 
 export function certificateFileName(name: string) {
   const slug = name
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")
+    .replace(/[\u0300-\u036f]/g, "")
     .replace(/đ/gi, "d")
     .replace(/[^a-z0-9]+/gi, "-")
     .replace(/^-|-$/g, "")

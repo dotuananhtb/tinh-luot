@@ -3,13 +3,14 @@
 import { Fragment } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Check, Flag, Play, RotateCcw, SearchCheck, Share2, SkipForward, ThumbsUp, X, ArrowDown } from "lucide-react";
-import { MAX_SCORE, POSTS, REACTIONS, verdict, type Post, type Reaction } from "@/lib/content";
+import { MAX_SCORE, REACTIONS, verdict, type Post, type Reaction } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { cn } from "@/lib/utils";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { TwoLayer } from "@/components/lens/two-layer";
 import { SectionHeading } from "@/components/shared/section-heading";
 
-const REACTION_ICON: Record<Reaction, React.ComponentType<{ className?: string }>> = {
+export const REACTION_ICON: Record<Reaction, React.ComponentType<{ className?: string }>> = {
   like: ThumbsUp,
   share: Share2,
   verify: SearchCheck,
@@ -39,7 +40,7 @@ function splitFlags(post: Post) {
 }
 
 /** Thân bài đăng, vẽ hai lần (ồn / sự thật) với cùng bố cục để Kính Tỉnh cắt khít. */
-function PostBody({ post, truth }: { post: Post; truth?: boolean }) {
+export function PostBody({ post, truth }: { post: Post; truth?: boolean }) {
   const parts = splitFlags(post);
   const text = (
     <p className="leading-[2.15]">
@@ -238,6 +239,7 @@ export function FeedSection({
   onReset: () => void;
 }) {
   const done = answers.filter(Boolean).length;
+  const POSTS = useContent().posts;
   const finished = done === POSTS.length;
   const v = verdict(score);
 
@@ -257,7 +259,7 @@ export function FeedSection({
         <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-8">
             {POSTS.map((p, i) => (
-              <PostCard key={p.name} post={p} index={i} picked={answers[i]} onPick={(r) => onPick(i, r)} />
+              <PostCard key={i} post={p} index={i} picked={answers[i]} onPick={(r) => onPick(i, r)} />
             ))}
           </div>
 

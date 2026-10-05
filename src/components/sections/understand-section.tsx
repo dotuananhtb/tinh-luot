@@ -3,7 +3,7 @@
 import { useRef, useState } from "react";
 import { animate, motion, useMotionValue, useTransform } from "motion/react";
 import { Check, Hand } from "lucide-react";
-import { FLIPS } from "@/lib/content";
+import { useContent } from "@/components/content-provider";
 import { cn } from "@/lib/utils";
 import { SectionHeading } from "@/components/shared/section-heading";
 import { PrinciplesBlock } from "@/components/sections/principles-block";
@@ -98,6 +98,7 @@ function HoldCard({ q, a, group, onReveal }: { q: string; a: string; group: stri
 
 export function UnderstandSection() {
   const [count, setCount] = useState(0);
+  const FLIPS = useContent().flips;
   const total = FLIPS.reduce((n, g) => n + g.cards.length, 0);
 
   return (
