@@ -83,7 +83,7 @@ export function EditorsPanel({ selfEmail }: { selfEmail: string }) {
         {Object.entries(eds.data ?? {}).map(([k, role]) => (
           <li key={k} className="flex items-center gap-3 px-4 py-2.5 text-sm">
             <span className="min-w-0 flex-1 truncate">{k.replaceAll(",", ".")}</span>
-            <span className={role === "owner" ? "rounded bg-ink px-2 py-0.5 font-mono text-[11px] font-bold text-lime" : "font-mono text-[11px] text-muted-ink"}>
+            <span className={role === "owner" ? "rounded bg-ink px-2 py-0.5 font-mono text-xs font-bold text-lime" : "font-mono text-xs text-muted-ink"}>
               {role === "owner" ? "OWNER" : "biên tập"}
             </span>
             {k !== self && role !== "owner" && (

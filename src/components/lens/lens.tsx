@@ -41,7 +41,7 @@ export function Lens() {
         type="button"
         onPointerDown={startDrag}
         className={cn(
-          "absolute left-0 flex -translate-x-1/2 touch-none whitespace-nowrap items-center gap-1.5 rounded-full border-2 border-ink bg-ink px-3 py-1.5 font-mono text-[11px] font-bold tracking-wider text-lime select-none",
+          "absolute left-0 flex -translate-x-1/2 touch-none whitespace-nowrap items-center gap-1.5 rounded-full border-2 border-ink bg-ink px-3 py-1.5 font-mono text-xs font-bold tracking-wider text-lime select-none",
           coarse ? "pointer-events-auto cursor-grab" : "",
         )}
         style={{ top: "calc(var(--lr) + 16px)" }}

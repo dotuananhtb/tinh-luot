@@ -37,6 +37,9 @@
 @media (max-width: 640px) {
   :root { --lr: 112px; }
 }
+@media (max-width: 400px) {
+  :root { --lr: 96px; }
+}
 
 /* Chế độ "Soi toàn trang": kính phủ hết, lớp sự thật hiện toàn bộ. */
 :root[data-lens-full="true"] { --lr: 400vmax; }

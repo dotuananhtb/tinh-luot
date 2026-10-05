@@ -97,7 +97,7 @@ export function SortSection() {
                   >
                     <p className={cn("text-xl font-bold text-balance", !isTop && "opacity-0")}>{c.text}</p>
                     {isTop && (
-                      <span className="absolute top-2.5 right-3 font-mono text-[10px] font-bold">
+                      <span className="absolute top-2.5 right-3 font-mono text-xs font-bold">
                         {CHIPS.length - deck.length + 1}/{CHIPS.length}
                       </span>
                     )}
@@ -129,7 +129,7 @@ export function SortSection() {
         </p>
 
         {/* các ô */}
-        <div className="grid gap-3 md:grid-cols-3">
+        <div className="grid grid-cols-3 gap-2 sm:gap-3">
           {BINS.map((b) => (
             <button
               key={b.key}
@@ -141,12 +141,12 @@ export function SortSection() {
               onClick={() => tryPlace(b.key)}
               aria-label={`Thả “${top?.text ?? ""}” vào ô ${b.label}`}
               className={cn(
-                "min-h-32 cursor-pointer rounded-2xl border-2 border-ink p-4 text-left transition-[background-color,transform] duration-150 disabled:cursor-default",
+                "min-h-28 cursor-pointer rounded-2xl border-2 border-ink p-2.5 text-left sm:min-h-32 sm:p-4 transition-[background-color,transform] duration-150 disabled:cursor-default",
                 hover === b.key ? "scale-[1.02] bg-lime" : "bg-white hover:bg-lime/40",
                 miss?.bin === b.key && "animate-[jitter_.3s_steps(2)_2] bg-alarm/10",
               )}
             >
-              <span className="flex items-center justify-between font-mono text-sm font-extrabold uppercase">
+              <span className="flex flex-col gap-0.5 font-mono text-xs leading-tight font-extrabold uppercase sm:flex-row sm:items-center sm:justify-between sm:text-sm">
                 {b.label}
                 <span className="tabular-nums text-muted-ink">{placed[b.key].length}/{CHIPS.filter((c) => c.bin === b.key).length}</span>
               </span>
@@ -156,7 +156,7 @@ export function SortSection() {
                     key={t}
                     initial={{ scale: 0.5, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="rounded-full bg-ink px-2.5 py-1 text-xs font-semibold text-paper"
+                    className="rounded-full bg-ink px-2 py-0.5 text-xs font-semibold text-paper sm:px-2.5 sm:py-1"
                   >
                     {t}
                   </motion.span>

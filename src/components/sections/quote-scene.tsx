@@ -38,7 +38,7 @@ export function QuoteScene() {
           }
           truth={
             <div className="flex h-full min-h-[22rem] flex-col justify-center gap-4 bg-lime p-5 text-ink md:p-8">
-              <p className="font-mono text-[11px] font-bold tracking-widest">ĐOẠN ĐẦY ĐỦ</p>
+              <p className="font-mono text-xs font-bold tracking-widest">ĐOẠN ĐẦY ĐỦ</p>
               <blockquote className="space-y-3 font-mono text-[clamp(0.95rem,2.3vw,1.25rem)] leading-relaxed font-bold">
                 {MARX_QUOTE.full.map((s) => (
                   <p key={s} className="text-ink/75">

@@ -34,7 +34,7 @@ const SELECTS: Record<string, { value: string; label: string }[]> = {
 
 const READ_ONLY = new Set(["key", "kind"]);
 const inputCls =
-  "w-full rounded-lg border-2 border-ink/25 bg-white px-3 py-2 text-[15px] outline-none transition-colors focus:border-ink focus:ring-4 focus:ring-lime";
+  "w-full rounded-lg border-2 border-ink/25 bg-white px-3 py-2 text-base outline-none transition-colors focus:border-ink focus:ring-4 focus:ring-lime";
 
 const setAt = (obj: Json, path: (string | number)[], value: Json): Json => {
   if (!path.length) return value;
@@ -125,7 +125,7 @@ export function FieldEditor({
             </div>
           ) : (
             <details key={i} open={depth > 0 || value.length <= 5} className="rounded-xl border-2 border-ink/15 bg-white open:border-ink/40">
-              <summary className="cursor-pointer px-4 py-2.5 font-mono text-sm font-bold select-none">
+              <summary className="flex min-h-11 cursor-pointer items-center px-4 py-2.5 font-mono text-sm font-bold select-none">
                 #{i + 1} {summaryOf(v)}
               </summary>
               <div className="border-t border-ink/10 p-4">

@@ -28,7 +28,7 @@ function JoinCard({ url, label, big = false }: { url: string; label: string; big
       <QrCode url={url} className={cn("aspect-square", big ? "w-[min(52vh,26rem)]" : "w-28")} />
       <div className={cn(big && "text-center")}>
         <p className={cn("font-mono font-extrabold", big ? "text-3xl" : "text-sm")}>{label}</p>
-        <p className={cn("font-mono break-all text-muted-ink", big ? "mt-1 text-lg" : "text-[11px]")}>{url.replace(/^https?:\/\//, "")}</p>
+        <p className={cn("font-mono break-all text-muted-ink", big ? "mt-1 text-lg" : "text-xs")}>{url.replace(/^https?:\/\//, "")}</p>
       </div>
     </div>
   );
@@ -196,7 +196,7 @@ export function PresenterApp() {
               type="button"
               onClick={() => update({ screen: s.key })}
               className={cn(
-                "h-9 cursor-pointer rounded-full border-2 border-ink px-4 font-mono text-xs font-bold",
+                "h-11 cursor-pointer rounded-full border-2 border-ink px-4 font-mono text-xs font-bold",
                 state.screen === s.key ? "bg-ink text-lime" : "bg-white",
               )}
             >
@@ -219,7 +219,7 @@ export function PresenterApp() {
         </Button>
         <Button onClick={() => update({ reveal: !state.reveal, screen: "vote" })}>
           <ScanLine /> {state.reveal ? "Ẩn đáp án" : "Lật đáp án"}
-          <kbd className="ml-1 rounded border border-ink/40 px-1 text-[10px]">Space</kbd>
+          <kbd className="ml-1 rounded border border-ink/40 px-1 text-xs">Space</kbd>
         </Button>
         <Button
           variant="outline"
@@ -228,7 +228,7 @@ export function PresenterApp() {
         >
           Bài sau <ChevronRight />
         </Button>
-        <span className="ml-auto font-mono text-[11px] text-muted-ink">← → đổi bài · Space lật · 1/2/3 đổi màn · F toàn màn hình</span>
+        <span className="ml-auto font-mono text-xs text-muted-ink">← → đổi bài · Space lật · 1/2/3 đổi màn · F toàn màn hình</span>
         <Button
           variant={confirmReset ? "ink" : "ghost"}
           size="sm"

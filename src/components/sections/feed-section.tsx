@@ -56,7 +56,7 @@ export function PostBody({ post, truth }: { post: Post; truth?: boolean }) {
             {p.text}
             <span
               className={cn(
-                "absolute -top-[1.05rem] left-0 rounded px-1 py-px font-mono text-[9.5px] leading-tight font-bold whitespace-nowrap text-white no-underline",
+                "absolute -top-[1.2rem] left-0 rounded px-1 py-px font-mono text-xs leading-tight font-bold whitespace-nowrap text-white no-underline",
                 p.flag.tone === "bad" ? "bg-alarm" : "bg-good",
               )}
             >
@@ -85,7 +85,7 @@ export function PostBody({ post, truth }: { post: Post; truth?: boolean }) {
           <p className="text-xs text-muted-ink">{post.meta}</p>
         </div>
         {truth && (
-          <span className="rounded-full bg-ink px-2 py-1 font-mono text-[9px] font-bold tracking-wider text-lime">
+          <span className="rounded-full bg-ink px-2 py-1 font-mono text-xs font-bold tracking-wider text-lime">
             BẢN CHẤT
           </span>
         )}
@@ -104,7 +104,7 @@ export function PostBody({ post, truth }: { post: Post; truth?: boolean }) {
         <div className="relative mx-4 mb-3 grid aspect-video place-items-center overflow-hidden rounded-xl bg-[repeating-linear-gradient(45deg,#2a2526_0_14px,#332d2e_14px_28px)] text-white">
           <span
             className={cn(
-              "absolute top-2.5 left-2.5 rounded px-1.5 py-1 font-mono text-[10px] font-bold",
+              "absolute top-2.5 left-2.5 rounded px-1.5 py-1 font-mono text-xs font-bold",
               post.media.live ? "bg-alarm" : "bg-black/60",
             )}
           >
@@ -159,7 +159,7 @@ function PostCard({
 
   return (
     <article className="overflow-hidden rounded-2xl border-2 border-ink bg-white shadow-[6px_6px_0_var(--ink)]">
-      <div className="flex items-center justify-between bg-ink px-4 py-1.5 font-mono text-[10px] font-bold text-paper">
+      <div className="flex items-center justify-between bg-ink px-4 py-1.5 font-mono text-xs font-bold text-paper">
         <span>BÀI {index + 1}/8</span>
         <span className="text-lime">SOI TRƯỚC KHI BẤM</span>
       </div>
@@ -177,7 +177,7 @@ function PostCard({
               disabled={!!picked}
               onClick={() => onPick(key)}
               className={cn(
-                "flex min-h-14 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 text-center text-[11px] leading-tight font-semibold text-muted-ink transition-[background-color,transform] duration-150 active:scale-95 disabled:cursor-default",
+                "flex min-h-14 min-w-0 cursor-pointer flex-col items-center justify-center gap-1 rounded-xl px-0.5 text-center break-words text-xs leading-tight font-semibold text-muted-ink transition-[background-color,transform] duration-150 active:scale-95 disabled:cursor-default",
                 !picked && "hover:bg-paper hover:text-ink",
                 isPicked && (right ? "bg-lime text-ink" : "bg-alarm text-white"),
                 isAnswer && "text-good outline-2 outline-good outline-dashed -outline-offset-2",
@@ -256,7 +256,7 @@ export function FeedSection({
           />
         </div>
 
-        <div className="mt-8 grid gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="mt-8 grid grid-cols-1 gap-8 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div className="mx-auto flex w-full max-w-xl flex-col gap-8">
             {POSTS.map((p, i) => (
               <PostCard key={i} post={p} index={i} picked={answers[i]} onPick={(r) => onPick(i, r)} />
@@ -266,7 +266,7 @@ export function FeedSection({
           <aside className="sticky top-16 z-20 order-first self-start lg:order-none">
             <div className="flex items-center gap-4 rounded-2xl border-2 border-ink bg-ink px-4 py-2.5 text-paper lg:block lg:p-4">
               <div className="flex shrink-0 items-baseline gap-2 lg:block">
-                <p className="font-mono text-[11px] font-bold tracking-widest text-lime">ĐỘ TỈNH TÁO</p>
+                <p className="font-mono text-xs font-bold tracking-widest text-lime">ĐỘ TỈNH TÁO</p>
                 <p className="font-mono text-xl font-extrabold tabular-nums lg:mt-1 lg:text-4xl">
                   {score}
                   <span className="text-sm text-paper/60 lg:text-lg">/{MAX_SCORE}</span>

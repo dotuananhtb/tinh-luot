@@ -2,6 +2,7 @@
 
 import { ArrowDown, ScanEye } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
 import { TwoLayer } from "@/components/lens/two-layer";
 import { useLens } from "@/components/lens/lens-provider";
 import { NoiseMarquee } from "@/components/shared/noise-marquee";
@@ -31,12 +32,12 @@ export function HeroSection() {
           </div>
         }
         truth={
-          <div className="grid h-full min-h-[calc(100dvh-54px)] place-items-center bg-lime px-4 py-24 text-center">
+          <div className="grid h-full min-h-[calc(100dvh-54px)] place-items-center bg-lime px-4 pt-16 pb-48 text-center sm:py-24 sm:pb-52">
             <div className="max-w-3xl">
               <p className="mb-7 inline-block border-2 border-ink bg-white px-3 py-1 font-mono text-sm font-extrabold tracking-[0.25em]">
                 TỈNH LƯỚT
               </p>
-              <h1 className="font-mono text-[clamp(1.9rem,6.4vw,4rem)] leading-[1.08] font-extrabold tracking-tight text-balance">
+              <h1 className="font-mono text-[clamp(1.6rem,6.4vw,4rem)] leading-[1.08] font-extrabold tracking-tight text-balance">
                 {hero.question}
               </h1>
               <p className="mx-auto mt-6 max-w-xl text-lg">
@@ -50,14 +51,14 @@ export function HeroSection() {
 
       {/* Lớp điều khiển nằm trên cả hai lớp, luôn bấm được. */}
       <div className="pointer-events-none absolute inset-x-0 bottom-0 z-10 flex flex-col items-center gap-3 px-4 pb-6">
-        <p className="pointer-events-auto rounded-full border-2 border-ink bg-white px-4 py-2 text-center font-mono text-xs font-bold">
+        <p className="pointer-events-auto max-w-[22rem] rounded-full border-2 border-ink bg-white px-4 py-2 text-center font-mono text-xs leading-snug font-bold">
           {coarse ? "Kéo Kính Tỉnh hoặc cuộn trang để soi bản chất dưới hiện tượng" : "Di chuột để soi bản chất bên dưới hiện tượng"}
         </p>
         <div className="pointer-events-auto flex flex-wrap justify-center gap-3">
-          <a href="#cau-noi" className={buttonVariants({ size: "lg" })}>
+          <a href="#cau-noi" className={cn(buttonVariants({ size: "lg" }), "h-11 px-4 text-sm sm:h-13 sm:px-7 sm:text-base")}>
             Bắt đầu lướt <ArrowDown />
           </a>
-          <button type="button" onClick={() => setFull(true)} className={buttonVariants({ variant: "outline", size: "lg" })}>
+          <button type="button" onClick={() => setFull(true)} className={cn(buttonVariants({ variant: "outline", size: "lg" }), "h-11 px-4 text-sm sm:h-13 sm:px-7 sm:text-base")}>
             <ScanEye /> Soi toàn trang
           </button>
         </div>

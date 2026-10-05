@@ -27,10 +27,10 @@ export function VoteBars({
         const correct = answer === key;
         return (
           <li key={key} className="flex items-center gap-3">
-            <span className={cn("flex shrink-0 items-center gap-2 font-semibold", big ? "w-56 text-2xl" : "w-32 text-sm")}>
-              <Icon className={big ? "size-7" : "size-4"} /> {label}
+            <span className={cn("flex shrink-0 items-center gap-2 font-semibold", big ? "w-28 text-base sm:w-40 sm:text-xl lg:w-56 lg:text-2xl" : "w-28 text-sm sm:w-32")}>
+              <Icon className={big ? "size-5 lg:size-7" : "size-4"} /> {label}
             </span>
-            <span className={cn("relative flex-1 overflow-hidden rounded-full border-2 border-ink bg-white", big ? "h-12" : "h-7")}>
+            <span className={cn("relative flex-1 overflow-hidden rounded-full border-2 border-ink bg-white", big ? "h-9 lg:h-12" : "h-7")}>
               <motion.span
                 className={cn(
                   "absolute inset-y-0 left-0",
@@ -41,12 +41,12 @@ export function VoteBars({
                 transition={{ type: "spring", stiffness: 160, damping: 22 }}
               />
               {correct && (
-                <span className={cn("absolute inset-y-0 left-3 flex items-center gap-1 font-mono font-extrabold", big ? "text-lg" : "text-xs")}>
-                  <Check className={big ? "size-5" : "size-3.5"} /> ĐÚNG
+                <span className={cn("absolute inset-y-0 left-3 flex items-center gap-1 font-mono font-extrabold", big ? "text-sm lg:text-lg" : "text-xs")}>
+                  <Check className={big ? "size-4 lg:size-5" : "size-3.5"} /> ĐÚNG
                 </span>
               )}
             </span>
-            <span className={cn("shrink-0 text-right font-mono font-bold tabular-nums", big ? "w-28 text-2xl" : "w-16 text-sm")}>
+            <span className={cn("shrink-0 text-right font-mono font-bold tabular-nums", big ? "w-20 text-base sm:w-24 sm:text-xl lg:w-28 lg:text-2xl" : "w-16 text-sm")}>
               {n} · {pct}%
             </span>
           </li>

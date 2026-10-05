@@ -18,7 +18,7 @@ function Frame({ children }: { children: React.ReactNode }) {
     <main className="min-h-dvh bg-paper">
       <header className="sticky top-0 z-10 flex items-center justify-between border-b-2 border-ink bg-paper/95 px-4 py-3 backdrop-blur">
         <span className="border-2 border-ink bg-lime px-2 py-0.5 font-mono text-xs font-extrabold tracking-[0.2em]">TỈNH LƯỚT</span>
-        <span className="flex items-center gap-1.5 font-mono text-[11px] font-bold">
+        <span className="flex items-center gap-1.5 font-mono text-xs font-bold">
           <span className="size-2 animate-pulse rounded-full bg-alarm" /> BỎ PHIẾU TRỰC TIẾP
         </span>
       </header>

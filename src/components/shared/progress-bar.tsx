@@ -29,14 +29,14 @@ export function ProgressBar({ noise }: { noise: number }) {
   return (
     <nav aria-label="Tiến độ" className="sticky top-0 z-50 border-b-2 border-ink bg-paper/90 backdrop-blur-md">
       <div className="mx-auto flex max-w-5xl items-center gap-3 px-4 py-2.5">
-        <ol className="flex flex-1 gap-1">
+        <ol className="flex min-w-0 flex-1 gap-1">
           {STEPS.map((s, i) => (
-            <li key={s.id} className="flex-1">
+            <li key={s.id} className="min-w-0 flex-1">
               <a
                 href={`#${s.id}`}
                 aria-current={i === active ? "step" : undefined}
                 className={cn(
-                  "block truncate font-mono text-[10px] font-bold uppercase transition-colors",
+                  "flex min-h-11 flex-col justify-center truncate font-mono text-xs font-bold uppercase transition-colors",
                   i === active ? "text-ink" : "text-muted-ink",
                 )}
               >
@@ -55,7 +55,7 @@ export function ProgressBar({ noise }: { noise: number }) {
             </li>
           ))}
         </ol>
-        <div className="hidden items-center gap-2 font-mono text-[10px] font-bold md:flex" title="Độ ồn của trang">
+        <div className="hidden items-center gap-2 font-mono text-xs font-bold lg:flex" title="Độ ồn của trang">
           <span>ỒN</span>
           <span className="relative h-2 w-16 overflow-hidden rounded-full bg-ink/15">
             <span
@@ -71,12 +71,12 @@ export function ProgressBar({ noise }: { noise: number }) {
           aria-checked={full}
           onClick={() => setFull(!full)}
           className={cn(
-            "flex h-9 shrink-0 cursor-pointer items-center gap-1.5 rounded-full border-2 border-ink px-3 font-mono text-[11px] font-bold transition-colors",
+            "flex h-11 min-w-11 shrink-0 cursor-pointer justify-center items-center gap-1.5 rounded-full border-2 border-ink px-3 font-mono text-xs font-bold transition-colors",
             full ? "bg-ink text-lime" : "bg-white",
           )}
         >
           <ScanEye className="size-4" />
-          <span className="hidden sm:inline">{full ? "Đang soi toàn trang" : "Soi toàn trang"}</span>
+          <span className="hidden lg:inline">{full ? "Đang soi toàn trang" : "Soi toàn trang"}</span>
         </button>
       </div>
     </nav>

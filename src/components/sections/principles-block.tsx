@@ -19,14 +19,14 @@ function PrincipleCards() {
           className="overflow-hidden rounded-2xl border-2 border-ink"
           noise={
             <div className="flex h-full min-h-56 flex-col justify-between bg-white p-5">
-              <span className="font-mono text-[11px] font-bold text-muted-ink">NGỘ NHẬN #{i + 1}</span>
+              <span className="font-mono text-xs font-bold text-muted-ink">NGỘ NHẬN #{i + 1}</span>
               <p className="font-display text-[clamp(1.5rem,4vw,2rem)] leading-tight text-alarm uppercase">“{p.myth}”</p>
-              <span className="font-mono text-[11px] font-bold">SOI ĐỂ THẤY NGUYÊN TẮC →</span>
+              <span className="font-mono text-xs font-bold">SOI ĐỂ THẤY NGUYÊN TẮC →</span>
             </div>
           }
           truth={
             <div className="flex h-full min-h-56 flex-col justify-between gap-3 bg-lime p-5">
-              <span className="font-mono text-[11px] font-bold">NGUYÊN TẮC {i + 1}</span>
+              <span className="font-mono text-xs font-bold">NGUYÊN TẮC {i + 1}</span>
               <p className="font-mono text-lg leading-snug font-extrabold">{p.title}</p>
               <p className="text-sm leading-relaxed">{p.body}</p>
             </div>

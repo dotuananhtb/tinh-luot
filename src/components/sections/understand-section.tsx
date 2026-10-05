@@ -67,7 +67,7 @@ function HoldCard({ q, a, group, onReveal }: { q: string; a: string; group: stri
       )}
     >
       <div>
-        <p className={cn("font-mono text-[11px] font-bold tracking-wider uppercase", revealed ? "text-lime" : "text-muted-ink")}>
+        <p className={cn("font-mono text-xs font-bold tracking-wider uppercase", revealed ? "text-lime" : "text-muted-ink")}>
           {group}
         </p>
         <p className="mt-1.5 text-lg leading-snug font-semibold">{q}</p>
@@ -75,7 +75,7 @@ function HoldCard({ q, a, group, onReveal }: { q: string; a: string; group: stri
       <motion.p style={{ filter: blur, opacity: answerOpacity }} className="mt-4 text-[0.95rem] leading-relaxed">
         {a}
       </motion.p>
-      <div className="mt-3 flex items-center gap-1.5 font-mono text-[11px] font-bold">
+      <div className="mt-3 flex items-center gap-1.5 font-mono text-xs font-bold">
         {revealed ? (
           <>
             <Check className="size-3.5 text-lime" /> <span className="text-lime">ĐÃ TỈNH</span>

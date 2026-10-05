@@ -99,24 +99,24 @@ function Editor({ initial, remote }: { initial: SiteContent; remote: SiteContent
                   type="button"
                   onClick={() => setTab(s.key)}
                   className={cn(
-                    "flex w-full cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-left text-sm font-semibold whitespace-nowrap",
+                    "flex w-full cursor-pointer items-center gap-2 min-h-11 rounded-lg px-3 py-2 text-left text-sm font-semibold whitespace-nowrap",
                     tab === s.key ? "bg-ink text-lime" : "hover:bg-ink/5",
                     stable(draft[s.key]) !== stable(remote[s.key]) && "after:ml-auto after:size-2 after:rounded-full after:bg-alarm",
                   )}
                 >
-                  <span className="w-3 font-mono text-[11px] opacity-60">{s.step}</span>
+                  <span className="w-3 font-mono text-xs opacity-60">{s.step}</span>
                   {s.label}
                 </button>
               </li>
             ))}
             <li className="mt-2 shrink-0 border-t border-ink/15 pt-2">
-              <button type="button" onClick={() => setTab("history")} className={cn("w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm font-semibold", tab === "history" ? "bg-ink text-lime" : "hover:bg-ink/5")}>
+              <button type="button" onClick={() => setTab("history")} className={cn("w-full cursor-pointer min-h-11 rounded-lg px-3 py-2 text-left text-sm font-semibold", tab === "history" ? "bg-ink text-lime" : "hover:bg-ink/5")}>
                 Lịch sử lưu
               </button>
             </li>
             {role === "owner" && (
               <li className="shrink-0">
-                <button type="button" onClick={() => setTab("editors")} className={cn("w-full cursor-pointer rounded-lg px-3 py-2 text-left text-sm font-semibold", tab === "editors" ? "bg-ink text-lime" : "hover:bg-ink/5")}>
+                <button type="button" onClick={() => setTab("editors")} className={cn("w-full cursor-pointer min-h-11 rounded-lg px-3 py-2 text-left text-sm font-semibold", tab === "editors" ? "bg-ink text-lime" : "hover:bg-ink/5")}>
                   Thành viên
                 </button>
               </li>

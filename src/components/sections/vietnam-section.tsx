@@ -17,11 +17,11 @@ export function VietnamSection() {
         <article className="rounded-sm border-2 border-ink bg-[#FBFAF6] p-5 shadow-[10px_10px_0_var(--ink)] md:p-8">
           {/* măng-sét */}
           <header className="border-b-4 border-double border-ink pb-3 text-center">
-            <p className="font-mono text-[10px] font-bold tracking-[0.3em] text-muted-ink">SỐ ĐẶC BIỆT · BẢN TIN TỈNH TÁO</p>
+            <p className="font-mono text-xs font-bold tracking-[0.12em] text-muted-ink sm:tracking-[0.3em]">SỐ ĐẶC BIỆT · BẢN TIN TỈNH TÁO</p>
             <p className="mt-1 font-mono text-[clamp(1.6rem,6vw,3.2rem)] leading-none font-extrabold tracking-tight">
               TÔN GIÁO Ở VIỆT NAM
             </p>
-            <p className="mt-2 flex justify-between border-t border-ink pt-1.5 font-mono text-[10px] font-bold">
+            <p className="mt-2 flex justify-between border-t border-ink pt-1.5 font-mono text-xs font-bold">
               <span>5 ĐẶC ĐIỂM</span>
               <span>5 CHÍNH SÁCH</span>
               <span>4 MỐC PHÁP LÝ</span>
