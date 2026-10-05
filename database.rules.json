@@ -1,0 +1,36 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "votes": {
+      "$session": {
+        ".read": "$session.matches(/^[a-z0-9-]{1,24}$/)",
+        "$post": {
+          "$reaction": {
+            ".write": "newData.exists()",
+            ".validate": "$session.matches(/^[a-z0-9-]{1,24}$/) && $post.matches(/^p[1-8]$/) && $reaction.matches(/^(like|share|verify|report|skip)$/) && newData.isNumber() && newData.val() === (data.exists() ? data.val() : 0) + 1"
+          }
+        }
+      }
+    },
+    "pledges": {
+      ".read": true,
+      "$id": {
+        ".write": "!data.exists()",
+        ".validate": "newData.hasChildren(['name', 't'])",
+        "name": {
+          ".validate": "newData.isString() && newData.val().length >= 1 && newData.val().length <= 40"
+        },
+        "t": {
+          ".validate": "newData.val() === now"
+        },
+        "score": {
+          ".validate": "newData.isNumber() && newData.val() >= 0 && newData.val() <= 80"
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    }
+  }
+}
