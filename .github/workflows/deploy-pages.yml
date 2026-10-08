@@ -10,9 +10,10 @@ permissions:
   pages: write
   id-token: write
 
+# Nhiều thành viên cùng push: xếp hàng chạy lần lượt, không huỷ lượt deploy đang đăng dở.
 concurrency:
   group: pages
-  cancel-in-progress: true
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -24,6 +25,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
+      # Code lỗi thì dừng ở đây, bản đang chạy trên web giữ nguyên.
+      - run: npm run lint
       - run: npm run build
         env:
           NEXT_PUBLIC_BASE_PATH: /tinh-luot
